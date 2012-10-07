@@ -3,8 +3,13 @@ VPATH=include:src:objects:lib:bin
 OBJECTS=$(patsubst src/%.cpp,%.o,$(wildcard src/*.cpp))
 OBJECTS_DIR=$(patsubst src/%.cpp,objects/%.o,$(wildcard src/*.cpp))
 
-OPENCV_DIR=OpenCV-2.4.2
+OPENCV_DIR=./OpenCV-2.4.2
+OPENCV_PKG_PATH=${OPENCV_DIR}/release/unix-install
+OPENCV_LIB_PATH=${OPENCV_DIR}/release/lib
 
+# set of environment variable (care colon when assign)
+export PKG_CONFIG_PATH:=${PKG_CONFIG_PATH}:${OPENCV_PKG_PATH}
+export LD_LIBRARY_PATH:=${LD_LIBRARY_PATH}:${OPENCV_LIB_PATH}
 
 CFLAGS=-Wall -g
 LFLAGS=-L ${OPENCV_DIR}/release/lib/ `pkg-config opencv --libs` -Llib/ 
@@ -36,17 +41,14 @@ IFLAGS=-I ${OPENCV_DIR}/include/ -I include/ \
 all : main
 
 main : $(OBJECTS)
-	export PKG_CONFIG_PATH=${OPENCV_DIR}/unix-install/
 	$(CC) $(CFLAGS) $(IFLAGS) $(OBJECTS_DIR) $(LFLAGS) -o $@
 	mv $@ bin/
 
 run : main
-	export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${OPENCV_DIR}/release/lib/" 
 	bin/main
 
 
 %.o : %.cpp
-	export PKG_CONFIG_PATH=${OPENCV_DIR}/unix-install/
 	$(CC) $(CFLAGS) $(IFLAGS) $(LFGLAGS) -c $<
 	mv $@ objects/
 
