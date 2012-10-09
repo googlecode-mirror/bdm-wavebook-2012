@@ -1,18 +1,23 @@
 CC=g++
-VPATH=include:src:objects:lib:bin
 OBJECTS=$(patsubst src/%.cpp,%.o,$(wildcard src/*.cpp))
 OBJECTS_DIR=$(patsubst src/%.cpp,objects/%.o,$(wildcard src/*.cpp))
 
 OPENCV_DIR=./OpenCV-2.4.2
-OPENCV_PKG_PATH=${OPENCV_DIR}/release/unix-install
-OPENCV_LIB_PATH=${OPENCV_DIR}/release/lib
+OPENCV_PKG_PATH=${OPENCV_DIR}
+OPENCV_RELEASE_DIR=${OPENCV_DIR}/release
+OPENCV_LIB_PATH=${OPENCV_RELEASE_DIR}/lib
+
+# path where dependencies are searched
+VPATH=include:src:objects:lib:bin:${OPENCV_LIB_PATH}
 
 # set of environment variable (care colon when assign)
 export PKG_CONFIG_PATH:=${PKG_CONFIG_PATH}:${OPENCV_PKG_PATH}
 export LD_LIBRARY_PATH:=${LD_LIBRARY_PATH}:${OPENCV_LIB_PATH}
 
+OPENCV_ONE_LIB_NAME=libopencv_contrib.so
+
 CFLAGS=-Wall -g
-LFLAGS=-L ${OPENCV_DIR}/release/lib/ `pkg-config opencv --libs` -Llib/ 
+LFLAGS=-L ${OPENCV_LIB_PATH} `pkg-config opencv --libs` -Llib/ 
 IFLAGS=-I ${OPENCV_DIR}/include/ -I include/ \
 	-I ${OPENCV_DIR}/modules/core/include \
 	-I ${OPENCV_DIR}/modules/imgproc/include \
@@ -40,9 +45,16 @@ IFLAGS=-I ${OPENCV_DIR}/include/ -I include/ \
 
 all : main
 
-main : $(OBJECTS)
+main : $(OBJECTS) ${OPENCV_ONE_LIB_NAME}
 	$(CC) $(CFLAGS) $(IFLAGS) $(OBJECTS_DIR) $(LFLAGS) -o $@
 	mv $@ bin/
+
+# build openCV libs
+${OPENCV_ONE_LIB_NAME} :
+	echo $@
+	cd ${OPENCV_RELEASE_DIR}; \
+	cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=. -D BUILD_PYTHON_SUPPORT=ON .. ;\
+	make
 
 run : main
 	bin/main
@@ -60,4 +72,4 @@ TAGS :
 	find . -type f -iname "*.h" -or -iname "*.cpp" -or -iname "*.hpp" | xargs etags -a 
 
 clean :
-	rm -f objects/*.o bin/main src/*~ include/*~
+	rm -rf objects/*.o bin/main src/*~ include/*~ 
