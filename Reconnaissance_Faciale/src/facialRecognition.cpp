@@ -47,8 +47,10 @@ int main (int argc,char** argv)
 
   Mat imgPerson1 = imread("../Base_de_donnees/faceDatabase/s1/7.pgm", CV_LOAD_IMAGE_GRAYSCALE);
   Mat imgPerson2 = imread("../Base_de_donnees/faceDatabase/s2/7.pgm", CV_LOAD_IMAGE_GRAYSCALE);
+  Mat imgPerson3 = imread("../Base_de_donnees/faceDatabase/s3/1.pgm", CV_LOAD_IMAGE_GRAYSCALE);	
 
   printf("prediction sujet 1\nlabel: %d\nprediction sujet 2\nlabel: %d\n", model->predict(imgPerson1),model->predict(imgPerson2));
+  printf("prediction sujet inconnu (3)\nlabel: %d\n", model->predict(imgPerson3));
   
   return 0;
 }
