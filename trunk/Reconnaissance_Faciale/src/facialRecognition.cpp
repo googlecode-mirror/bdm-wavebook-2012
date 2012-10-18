@@ -7,6 +7,12 @@
 #include "opencv/highgui.h"
 #include "opencv/ml.h"
 
+#include <iostream>
+#include <iomanip>
+#include <locale>
+#include <sstream>
+#include <string> 
+
 using namespace cv;
 
 class LabelImage
@@ -44,9 +50,40 @@ void initImages()
 	// holds images and labels
 	// // images for first person
 
-	LabelImage img = LabelImage(0, imread("../Base_de_donnees/faceDatabase/s1/1.pgm", CV_LOAD_IMAGE_GRAYSCALE));
+	LabelImage baseImage = LabelImage(1, imread("../Base_de_donnees/faceDatabase/s1/1.pgm", CV_LOAD_IMAGE_GRAYSCALE));
+	trainingImages.push_back(baseImage);
 
-	//LabelImage baseImage = new LabelImage(0, imread("../Base_de_donnees/faceDatabase/s1/1.pgm", CV_LOAD_IMAGE_GRAYSCALE));
+	string numDirectory;
+	string numImage;
+	string imgString;
+
+	for(int i = 1; i < 3; i++)
+	{
+
+		for(int j = 1; j < 7; j++)
+		{
+			//numImage = "";
+			std::stringstream outI;
+			std::stringstream outJ;
+
+			outI << i;
+			numDirectory = outI.str();
+			numDirectory += "/";
+
+			outJ << j;
+			numImage = outJ.str();
+			numImage += ".pgm";
+
+			printf("../Base_de_donnees/faceDatabase/s%s%s\n", numDirectory.c_str(), numImage.c_str());
+
+			imgString = "../Base_de_donnees/faceDatabase/s"+ numDirectory + numImage;
+
+			baseImage = LabelImage(i, imread(imgString, CV_LOAD_IMAGE_GRAYSCALE));
+			trainingImages.push_back(baseImage);
+		}
+
+		printf("\n");
+	}
 
 	//trainingImages
 	images.push_back(imread("../Base_de_donnees/faceDatabase/s1/1.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(1);
