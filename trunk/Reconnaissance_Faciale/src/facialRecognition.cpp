@@ -81,8 +81,6 @@ void initImages()
 			baseImage = LabelImage(i, imread(imgString, CV_LOAD_IMAGE_GRAYSCALE));
 			trainingImages.push_back(baseImage);
 		}
-
-		printf("\n");
 	}
 
 	//trainingImages
