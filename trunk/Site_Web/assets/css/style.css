@@ -1,0 +1,92 @@
+ /* Animations pour la vague */
+
+@keyframes dropWave
+{
+	from {background-position: 0px 0px;}
+	to  {background-position: 2200px 0px;}
+}
+
+@-moz-keyframes dropWave
+{
+	from {background-position: 0px 0px;}
+	to  {background-position: 2200px 0px;}
+}
+
+@-webkit-keyframes dropWave
+{
+	from {background-position: 0px 0px;}
+	to  {background-position: 2200px 0px;}
+}
+
+@-o-keyframes dropWave
+{
+	from {background-position: 0px 0px;}
+	to  {background-position: 2200px 0px;}
+}
+
+ /* Eléments personnels */
+
+body 
+{ 
+	padding-top:40px;
+}
+ 
+body header
+ {
+	background-image: url('../img/wave.png');
+    background-repeat: repeat-x;
+	background-color: rgb(230,230,230);
+	height:190px;
+	padding-top: 20px;
+	color: white;
+	text-shadow: 2px 2px 4px black;
+	box-shadow: 1px 1px 12px rgb(180,180,180);
+	animation:dropWave 3.0s 2 linear;
+	-webkit-animation:dropWave 3.0s 2 linear;
+	-moz-animation:dropWave 3.0s 2 linear;
+	-o-animation:dropWave 3.0s 2 linear;
+	
+}
+
+body header h1
+ {
+	font-size: 60px;
+ }
+ 
+body section#corps
+{
+	padding-top: 15px;
+	width: 950px;
+	margin: auto;
+}
+ 
+body footer
+{
+	background-color: rgb(230,230,230);
+	box-shadow: -1px -1px 10px rgb(180,180,180);
+	padding:10px;
+	margin-top:20px;
+}
+ 
+ /* Modification des éléments du BootStrap */
+ 
+div.hero-unit
+{
+	padding:20px;
+}
+ 
+div.span4
+{
+	margin-top:20px;
+}
+
+a.brand
+{
+	width:100px;
+	text-align:right;
+	background-image: url('../img/wave-icon.png');
+	background-position: left;
+	background-repeat: no-repeat;
+	color: rgb(200,200,200);
+}
+ 
