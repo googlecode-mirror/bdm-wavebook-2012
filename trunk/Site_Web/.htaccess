@@ -1,15 +1,15 @@
-#   Empêche la visualisation de l'arborescence, n'a rien à voir avec le masquage du « index.php ».
+#   EmpÃªche la visualisation de l'arborescence, n'a rien Ã  voir avec le masquage du Â« index.php Â».
 Options -Indexes
 
-#   Active le module de réécriture d'URL.
+#   Active le module de rÃ©Ã©criture d'URL.
 RewriteEngine on
 
 #
-#   Fixe les règles de réécriture d'URL. Ici, nous utilisons une liste blanche.
+#   Fixe les rÃ¨gles de rÃ©Ã©criture d'URL. Ici, nous utilisons une liste blanche.
 #
 
-#   Toutes les URL qui ne correspondent pas à ces masques sont réécrites.
+#   Toutes les URL qui ne correspondent pas Ã  ces masques sont rÃ©Ã©crites.
 RewriteCond $1 !^(index\.php|assets/|robots\.txt)
 
-#   Toutes les autres URL vont être redirigées vers le fichier index.php.
+#   Toutes les autres URL vont Ãªtre redirigÃ©es vers le fichier index.php.
 RewriteRule ^(.*)$ index.php/$1 [L]
