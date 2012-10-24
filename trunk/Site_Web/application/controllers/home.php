@@ -19,6 +19,7 @@ class Home extends GuestController
 	public function index()
 	{
 		parent::loadHeader();
+		$this->load->view('notification_zone');
 		$this->load->view('home/index');
 		parent::loadFooter();
 	}

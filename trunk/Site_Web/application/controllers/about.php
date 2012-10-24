@@ -11,9 +11,16 @@ class About extends GuestController
 		
 		//On change le titre de la page
 		parent::setPageName('A propos');
-		
+
 		//On change la vue du menu
-		parent::setMenuView('menu/about_menu');
+		if($this->session->userdata('is_connected') == 1 && $this->session->userdata('user_obj') != NULL)
+		{
+			parent::setMenuView('menu/about_connected_menu');
+		}
+		else
+		{
+			parent::setMenuView('menu/about_menu');
+		}
 	}
 
 	public function index()

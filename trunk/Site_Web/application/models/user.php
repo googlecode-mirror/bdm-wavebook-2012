@@ -22,7 +22,6 @@ class User extends CI_Model
 	* Attributs statiques de la classe User
 	*/
 	public static $table = 'users';
-	public static $user_directory = '../Base_de_donnees/upload';
 	public static $nb_file_user_matched = 20;
 	
 	/**
@@ -66,7 +65,7 @@ class User extends CI_Model
 				$query->free_result();
 			}
 			
-		return $art;
+		return $user;
 	}
 	
 	/**
@@ -98,7 +97,44 @@ class User extends CI_Model
 	*/
 	public function getUserFiles()
 	{
-		//To be continued...
+		$list_files = array();
+		$sql = 'SELECT * FROM '.File::$table.' WHERE id_user = ? ORDER BY date_file DESC LIMIT 0,?';
+				
+		$CI =& get_instance();	
+		$query = $CI->db->query($sql,array($this->id, User::$nb_file_user_matched));
+				
+			foreach ($query->result() as $row)
+			{
+				$file = new File();
+
+				$file->id = $row->id_file;
+				$file->id_user = $row->id_user;
+				$file->url = $row->url_file;
+				$file->desc = $row->desc_file;
+				$file->keywords = $row->keywords_file;
+				$file->type = $row->type_file;
+				$file->date = $row->date_file;
+				
+				$list_files[] = $file;
+			}
+
+		$query->free_result();
+		
+		return $list_files;
+	}
+
+	/**
+
+	* Fonction permettant de retourner les X derniers partages de l'utilisateur
+	*/
+	public function countUserFiles()
+	{
+		$sql = 'SELECT * FROM '.File::$table.' WHERE id_user = ?';
+		$CI =& get_instance();	
+		$query = $CI->db->query($sql,array($this->id));
+
+		return $query->num_rows();
+		
 	}
 	
 	/**
@@ -124,7 +160,13 @@ class User extends CI_Model
 			
 			$query = $CI->db->query($sql, array($this->name, $this->vorname, $this->email, $this->sex, $this->password));
 
-			return $query;
+			//on récupere l'identifiant de l'utilisateur (autoincrement)
+			$sql = 'SELECT id_user FROM '.User::$table.' WHERE vorname_user = ? AND email_user = ? AND name_user = ?';
+			$query = $CI->db->query($sql,array($id));
+			$row = $query->row();
+			$this->id = $row->id_user;
+
+		return $query;
 	}
 	
 	/**

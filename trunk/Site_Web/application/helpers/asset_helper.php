@@ -56,7 +56,7 @@ if ( ! function_exists('tags'))
 					$res .= ' , ';
 				}
 				
-				$res .= '<a href="' . base_url() . 'blog/search/' . trim($tag).'">'. trim($tag).'</a>';
+				$res .= '<a href="' . base_url() . 'flux/search/' . trim($tag).'"><span class="label label-info">'. trim($tag).'</span></a>';
 			}
 		}
 		return $res;

@@ -1,3 +1,11 @@
+AddType video/ogg  .ogv
+AddType video/mp4  .mp4
+AddType video/webm .webm
+
+AddType audio/mpeg .mp1 .mp2 .mp3 .mpg .mpeg
+AddType audio/ogg .oga .ogg
+AddType audio/wav .wav
+
 #   Empêche la visualisation de l'arborescence, n'a rien à voir avec le masquage du « index.php ».
 Options -Indexes
 
