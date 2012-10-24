@@ -6,8 +6,8 @@
 			  <div class="nav-collapse">
 				<a class="brand" href="<?php  echo url('flux'); ?>">WaveBook</a>
 				<ul class="nav">
-				  <li class="active"><a href="<?php  echo url('flux'); ?>"><i class="icon-th-list"></i> Flux d'actualités</a></li>
-				  <li><a href="<?php  echo url('profil'); ?>"><i class="icon-user"></i> Profil de <?php $user =  unserialize($this->session->userdata('user_obj')); echo ucfirst($user->vorname) . ' ' . ucfirst($user->name); ?></a></li>
+				  <li><a href="<?php  echo url('flux'); ?>"><i class="icon-th-list"></i> Flux d'actualités</a></li>
+				  <li  class="active"><a href="<?php  echo url('profil'); ?>"><i class="icon-user"></i> Profil de <?php $user = unserialize($this->session->userdata('user_obj')); echo ucfirst($user->vorname) . ' ' . ucfirst($user->name); ?></a></li>
 				  <li class="dropdown">
 						<a href="<?php  echo url('account/settings'); ?>" class="dropdown-toggle" data-toggle="dropdown">
 						 <i class="icon-wrench"></i> Mon compte
@@ -29,3 +29,4 @@
 			</div>
 		  </div>
 		</nav>
+	

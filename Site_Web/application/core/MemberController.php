@@ -8,9 +8,13 @@ class MemberController extends MY_Controller
 	{
 		parent::__construct();
 		
+		// Test uniquement !
+		$this->session->set_userdata('user_obj', serialize(User::getUserById(3)));
+		$this->session->set_userdata('is_connected',1);
+
 		/*
 		Desactiver pour le moment...
-		if($this->session->userdata('is_connected') != 1 && $this->session->userdata('user') != NULL)
+		if($this->session->userdata('is_connected') != 1 && $this->session->userdata('user_obj') != NULL)
 		{
 			parent::show403Error(); 
 		}

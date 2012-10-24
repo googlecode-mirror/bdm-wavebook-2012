@@ -98,6 +98,12 @@ $mimes = array(	'hqx'	=>	'application/mac-binhex40',
 				'word'	=>	array('application/msword', 'application/octet-stream'),
 				'xl'	=>	'application/excel',
 				'eml'	=>	'message/rfc822',
+				'ogv' => 'video/ogg',
+				'ogg' => 'audio/ogg',
+				'wma' => 'audio/x-ms-wma',
+				'wav' => 'audio/x-wav',
+				'mp4' => 'video/mp4',
+				'webm' => 'video/webm',
 				'json' => array('application/json', 'text/json')
 			);
 

@@ -10,8 +10,7 @@
 *	  `desc_file` varchar(300) NOT NULL,
 *	  `keywords_file` varchar(200) NOT NULL,
 *	  `date_file` datetime NOT NULL,
-*	  `url_file` varchar(200) NOT NULL,
-*	  `size_file` int(11) NOT NULL,
+*	  `url_file` varchar(200) NOT NULL
 *	  PRIMARY KEY (`id_file`),
 *	  UNIQUE KEY `url_file` (`url_file`),
 *	  KEY `fk_user_id_file` (`id_user`)
@@ -25,7 +24,6 @@ class File extends CI_Model
 	* Attributs statiques de la classe File_user
 	*/
 	public static $table = 'user_file';
-	public static $file_directory = 'files';
 	public static $file_per_page = 10;
 	
 	/**
@@ -38,19 +36,18 @@ class File extends CI_Model
 	public $type;
 	public $url;
 	public $date;
-	public $size;
 
 	/**
 	* Fonction permettant la récuperation des avatars d'un utilisateur (dernier dans la liste = avatar courant)
 	* @param identifiant de utilisateur
 	*/
-	public static function getFilesByPage($from = 0, $to = File::$file_per_page)
+	public static function getFilesByPage($from = 0)
 	{	
 		$list_files = array();
 		$sql = 'SELECT * FROM '.File::$table.' ORDER BY date_file DESC LIMIT ?,?';
 				
 		$CI =& get_instance();	
-		$query = $CI->db->query($sql,array($from, $to));
+		$query = $CI->db->query($sql,array($from, File::$file_per_page));
 				
 			foreach ($query->result() as $row)
 			{
@@ -62,7 +59,6 @@ class File extends CI_Model
 				$file->desc = $row->desc_file;
 				$file->keywords = $row->keywords_file;
 				$file->type = $row->type_file;
-				$file->size = $row->size_file;
 				$file->date = $row->date_file;
 				
 				$list_files[] = $file;
@@ -78,7 +74,7 @@ class File extends CI_Model
 	*/
 	public function getLink()
 	{
-		return User::$user_directory . '/' . $this->id_user . '/' . Avatar::$file_directory . '/' . $this->url;
+		return base_url() . Upload::$upload_directory . '/' . $this->id_user . '/' . Upload::$upload_file_directory . '/' . $this->url;
 	}
 
 	/**
@@ -86,7 +82,28 @@ class File extends CI_Model
 	*/
 	public function getHTML()
 	{
-		//To be continued...
+		$html = '<a href="'.$this->getLink().'">Télécharger le document</a>';
+		
+		if($this->type == 'image')
+		{
+			$html = '<img src="'.$this->getLink().'" alt="Lien mort" title="Lien mort" />';
+		}
+		else if($this->type == 'video')
+		{
+			$html = '<video height="250" controls>
+					<source src="'.$this->getLink().'" />
+					<div class="alert alert-warning">Ce format n\'est pas géré par votre navigateur !</div>
+				</video>';
+		}
+		else if($this->type == 'music')
+		{
+			$html = '<audio controls>
+					<source src="'.$this->getLink().'" />
+					<div class="alert alert-warning">Ce format n\'est pas géré par votre navigateur !</div>
+				</audio>';
+		}
+
+		return $html;
 	}
 
 	/**
@@ -95,10 +112,10 @@ class File extends CI_Model
 	public function save()
 	{
 			
-		$sql = 'INSERT INTO '.File::$table.' VALUES(NULL,?,?,?,?,NOW(),?,?)';
+		$sql = 'INSERT INTO '.File::$table.' VALUES(NULL,?,?,?,?,NOW(),?)';
 		$CI =& get_instance();
 			
-		$query = $CI->db->query($sql, array($this->id_user, $this->type, $this->desc, $this->keywords, $this->url,$this->size));
+		$query = $CI->db->query($sql, array($this->id_user, $this->type, $this->desc, $this->keywords, $this->url));
 
 		return $query;
 	}
@@ -113,7 +130,6 @@ class File extends CI_Model
 		echo 'ID_USER=' . $this->id_user . ' --- ';
 		echo 'URL=' . $this->url  . ' --- ';
 		echo 'DATE=' . $this->date . ' --- ';
-		echo 'SIZE=' . $this->size  . ' --- ';
 		echo 'DESC=' . $this->desc . ' --- ';
 		echo 'KEYWORDS=' . $this->keywords  . ' --- ';
 		echo 'TYPE=' . $this->type . ' --- ';

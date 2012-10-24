@@ -59,14 +59,56 @@ body section#corps
 	width: 950px;
 	margin: auto;
 }
- 
+
+body section#notifications
+{
+	padding-top: 30px;
+	width: 950px;
+	margin: auto;
+}
+
 body footer
 {
 	background-color: rgb(230,230,230);
 	box-shadow: -1px -1px 10px rgb(180,180,180);
 	padding:10px;
-	margin-top:20px;
+	margin-top:30px;
 }
+
+div.post img.avatar-little
+{
+	float:left;
+}
+
+div.post h4
+{
+	margin-left: 65px;
+}
+
+img.avatar-little
+{
+	height:50px;
+	width:50px;
+}
+
+img.avatar-medium
+{
+	height:75px;
+	width:75px;
+}
+
+img.avatar-big
+{
+	height:150px;
+	width:150px;
+}
+
+div.well img, div.well audio, div.well video
+{
+	margin: auto;
+	width: 520px;
+}
+
  
  /* Modification des éléments du BootStrap */
  
@@ -78,6 +120,12 @@ div.hero-unit
 div.span4
 {
 	margin-top:20px;
+}
+
+div.well
+{
+	padding: 5px;
+	margin-left: 65px;
 }
 
 a.brand

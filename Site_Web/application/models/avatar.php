@@ -21,8 +21,6 @@ class Avatar extends CI_Model
 	* Attributs statiques de la classe Avatar_user
 	*/
 	public static $table = 'user_avatar';
-	public static $avatar_directory = 'profile';
-	public static $avatar_mini_directory = 'profile/mini';
 	
 	/**
 	* Attribut d'une instance Avatar_user
@@ -40,7 +38,7 @@ class Avatar extends CI_Model
 	{
 		$list_avatars = null;
 		
-			if(User::isUserExist($id))
+			if(User::isUserExist($id_user))
 			{
 				
 				$list_avatars = array();
@@ -55,7 +53,7 @@ class Avatar extends CI_Model
 					$avatar->id = $row->id_avatar;
 					$avatar->id_user = $id_user;
 					$avatar->url = $row->url_avatar;
-					$user->date = $row->date_avatar;
+					$avatar->date = $row->date_avatar;
 					$list_avatars[] = $avatar;
 				}
 
@@ -70,7 +68,7 @@ class Avatar extends CI_Model
 	*/
 	public function getLink()
 	{
-		return User::$user_directory . '/' . $this->id_user . '/' . Avatar::$avatar_directory . '/' . $this->url;
+		return base_url() . Upload::$upload_directory . '/' . $this->id_user . '/' . Upload::$upload_avatar_directory . '/' . $this->url;
 	}
 
 	/**
@@ -78,7 +76,7 @@ class Avatar extends CI_Model
 	*/
 	public function getMiniatureLink()
 	{
-		return User::$user_directory . '/' . $this->id_user . '/' . Avatar::$avatar_mini_directory . '/' . $this->url;
+		return base_url() . Upload::$upload_directory . '/' . $this->id_user . '/' . Upload::$upload_avatar_mini_directory . '/' . $this->url;
 	}
 
 	/**
