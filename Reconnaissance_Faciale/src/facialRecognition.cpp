@@ -1,4 +1,5 @@
 #include "facialRecognition.h"
+
 #include "opencv/cv.h"
 #include "opencv/cvwimage.h"
 #include "opencv/cvaux.h"
@@ -15,172 +16,166 @@
 
 using namespace cv;
 
-class LabelImage
-{
-private:
-	int ID;
-	Mat image;
-
-public:
- LabelImage(int otherID, Mat otherImage)
-	{
-		ID = otherID;
-		image = otherImage;
-	}
-
-	int GetID()
-	{
-		return ID;
-	}
-
-	Mat GetImage()
-	{
-		return image;
-	}
-};
 
 vector<LabelImage> trainingImages;
 
-
-vector<Mat> images;
-vector<int> labels;
+std::vector<Mat> images;
+std::vector<int> labels;
 
 void initImages()
 {
-	// holds images and labels
-	// // images for first person
+  // holds images and labels
+  // // images for first person
 
-	LabelImage baseImage = LabelImage(1, imread("../Base_de_donnees/faceDatabase/s1/1.pgm", CV_LOAD_IMAGE_GRAYSCALE));
-	trainingImages.push_back(baseImage);
+  LabelImage baseImage = LabelImage(1, imread("../Base_de_donnees/old/faceDatabase/s1/1.pgm", CV_LOAD_IMAGE_GRAYSCALE));
+  trainingImages.push_back(baseImage);
 
-	string numDirectory;
-	string numImage;
-	string imgString;
+  string numDirectory;
+  string numImage;
+  string imgString;
 
-	for(int i = 1; i < 3; i++)
+  for(int i = 1; i < 3; i++)
+    {
+
+      for(int j = 1; j < 7; j++)
 	{
+	  //numImage = "";
+	  std::stringstream outI;
+	  std::stringstream outJ;
 
-		for(int j = 1; j < 7; j++)
-		{
-			//numImage = "";
-			std::stringstream outI;
-			std::stringstream outJ;
+	  outI << i;
+	  numDirectory = outI.str();
+	  numDirectory += "/";
 
-			outI << i;
-			numDirectory = outI.str();
-			numDirectory += "/";
+	  outJ << j;
+	  numImage = outJ.str();
+	  numImage += ".pgm";
 
-			outJ << j;
-			numImage = outJ.str();
-			numImage += ".pgm";
+	  printf("../Base_de_donnees/old/faceDatabase/s%s%s\n", numDirectory.c_str(), numImage.c_str());
 
-			printf("../Base_de_donnees/faceDatabase/s%s%s\n", numDirectory.c_str(), numImage.c_str());
+	  imgString = "../Base_de_donnees/old/faceDatabase/s"+ numDirectory + numImage;
 
-			imgString = "../Base_de_donnees/faceDatabase/s"+ numDirectory + numImage;
-
-			baseImage = LabelImage(i, imread(imgString, CV_LOAD_IMAGE_GRAYSCALE));
-			trainingImages.push_back(baseImage);
-		}
+	  baseImage = LabelImage(i, imread(imgString, CV_LOAD_IMAGE_GRAYSCALE));
+	  trainingImages.push_back(baseImage);
 	}
+    }
 
-	//trainingImages
-	images.push_back(imread("../Base_de_donnees/faceDatabase/s1/1.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(1);
-	images.push_back(imread("../Base_de_donnees/faceDatabase/s1/2.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(1);
-	images.push_back(imread("../Base_de_donnees/faceDatabase/s1/3.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(1);
-	images.push_back(imread("../Base_de_donnees/faceDatabase/s1/4.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(1);
-	images.push_back(imread("../Base_de_donnees/faceDatabase/s1/5.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(1);
-	images.push_back(imread("../Base_de_donnees/faceDatabase/s1/6.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(1);
+  //trainingImages
+  images.push_back(imread("../Base_de_donnees/old/faceDatabase/s1/1.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(1);
+  images.push_back(imread("../Base_de_donnees/old/faceDatabase/s1/2.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(1);
+  images.push_back(imread("../Base_de_donnees/old/faceDatabase/s1/3.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(1);
+  images.push_back(imread("../Base_de_donnees/old/faceDatabase/s1/4.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(1);
+  images.push_back(imread("../Base_de_donnees/old/faceDatabase/s1/5.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(1);
+  images.push_back(imread("../Base_de_donnees/old/faceDatabase/s1/6.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(1);
 
-	images.push_back(imread("../Base_de_donnees/faceDatabase/s2/1.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(2);
-	images.push_back(imread("../Base_de_donnees/faceDatabase/s2/2.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(2);
-	images.push_back(imread("../Base_de_donnees/faceDatabase/s2/3.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(2);
-	images.push_back(imread("../Base_de_donnees/faceDatabase/s2/4.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(2);
-	images.push_back(imread("../Base_de_donnees/faceDatabase/s2/5.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(2);
-	images.push_back(imread("../Base_de_donnees/faceDatabase/s2/6.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(2);
+  images.push_back(imread("../Base_de_donnees/old/faceDatabase/s2/1.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(2);
+  images.push_back(imread("../Base_de_donnees/old/faceDatabase/s2/2.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(2);
+  images.push_back(imread("../Base_de_donnees/old/faceDatabase/s2/3.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(2);
+  images.push_back(imread("../Base_de_donnees/old/faceDatabase/s2/4.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(2);
+  images.push_back(imread("../Base_de_donnees/old/faceDatabase/s2/5.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(2);
+  images.push_back(imread("../Base_de_donnees/old/faceDatabase/s2/6.pgm", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(2);
 }
 
 
 
 
- /** Global variables */
- String face_cascade_name = "OpenCV-2.4.2/data/haarcascades/haarcascade_frontalface_alt.xml";
- String eyes_cascade_name = "OpenCV-2.4.2/data/haarcascades/haarcascade_eye_tree_eyeglasses.xml";
- CascadeClassifier face_cascade;
- CascadeClassifier eyes_cascade;
- RNG rng(12345);
-
 /** @function detectAndDisplay */
-void detectAndDisplay( Mat frame )
+int FaceDetecter::detectAndReframe( Mat frame,String pathWrite)
 {
   std::vector<Rect> faces;
   Mat frame_gray;
+  int ret=SINGLE_FACE_FOUND;
 
-  cvtColor( frame, frame_gray, CV_BGR2GRAY );
+  cvtColor(frame, frame_gray, CV_BGR2GRAY);
   equalizeHist( frame_gray, frame_gray );
 
   //-- Detect faces
   face_cascade.detectMultiScale( frame_gray, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 30) );
 
-  for( int i = 0; i < faces.size(); i++ )
+  if (faces.size()<=0)
     {
-      Point center( faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5 );
-      ellipse( frame, center, Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar( 255, 0, 255 ), 4, 8, 0 );
+      return NO_FACE_FOUND;
+    }
 
-      Mat faceROI = frame_gray( faces[i] );
-      imwrite("test.jpg" ,faceROI); // A JPG FILE IS BEING SAVED
-      std::vector<Rect> eyes;
-
-      //-- In each face, detect eyes
-      eyes_cascade.detectMultiScale( faceROI, eyes, 1.1, 2, 0 |CV_HAAR_SCALE_IMAGE, Size(30, 30) );
-
-      for( int j = 0; j < eyes.size(); j++ )
+  // We now pick the biggest we've found
+  unsigned int maxSubscript=0;
+  Rect maxFace=faces[0];
+  for( unsigned int i = 1; i < faces.size(); i++ )
+    {
+      // more than one face have been found 
+      ret=MANY_FACES_FOUND;
+      // comparaison with heights of faces
+      if (faces[i].height>maxFace.height)
 	{
-	  Point center( faces[i].x + eyes[j].x + eyes[j].width*0.5, faces[i].y + eyes[j].y + eyes[j].height*0.5 );
-	  int radius = cvRound( (eyes[j].width + eyes[j].height)*0.25 );
-	  circle( frame, center, radius, Scalar( 255, 0, 0 ), 4, 8, 0 );
+	  maxFace=faces[i];
+	  maxSubscript=i;
 	}
     }
-  //-- Show what you got
-  // imwrite("test.jpg" ,frame); // A JPG FILE IS BEING SAVED
-  // OF 6KB , BUT IT IS BLACK
 
-  // imshow( window_name, frame );
+  // pick the center of the face
+  Point center( maxFace.x + maxFace.width*0.5, maxFace.y + maxFace.height*0.5 );
+  ellipse( frame, center, Size( maxFace.width*0.5, maxFace.height*0.5), 0, 0, 360, Scalar( 255, 0, 255 ), 4, 8, 0 );
+
+  Mat faceROI = frame_gray( maxFace );
+  imwrite(pathWrite.c_str() ,faceROI); // A JPG FILE IS BEING SAVED
+  printf("image written in %s\n",pathWrite.c_str());
+  return ret;
 }
+
+
 
 int main (int argc,char** argv)
 {
   // Create a new Fisherfaces model and retain all available Fisherfaces,
   // this is the most common usage of this specific FaceRecognizer:
   //
-  Ptr<FaceRecognizer> model =  createEigenFaceRecognizer();
+  // Ptr<FaceRecognizer> model =  createEigenFaceRecognizer();
 
-  //-- 1. Load the cascades
-  if( !face_cascade.load( face_cascade_name ) ){ printf("--(!)Error loading\n"); return -1; };
-  if( !eyes_cascade.load( eyes_cascade_name ) ){ printf("--(!)Error loading\n"); return -1; };
+  // /////////////////////////////////////////////////// 
+  // /////////////////////////////////////////////////// train our FaceRecognizer
+  // ///////////////////////////////////////////////////
 
-  /////////////////////////////////////////////////// 
-  /////////////////////////////////////////////////// train our FaceRecognizer
-  ///////////////////////////////////////////////////
+  // initImages();
 
-  initImages();
+  // // // This is the common interface to train all of the available cv::FaceRecognizer
+  // // // implementations:
+  // // //
+  // model->train(images, labels);
 
-  // // This is the common interface to train all of the available cv::FaceRecognizer
-  // // implementations:
-  // //
-  model->train(images, labels);
+  // /////////////////////////////////////////////////// 
+  // /////////////////////////////////////////////////// test if the following pic belongs
+  // /////////////////////////////////////////////////// 
 
-  /////////////////////////////////////////////////// 
-  /////////////////////////////////////////////////// test if the following pic belongs
-  /////////////////////////////////////////////////// 
+  // Mat imgPerson1 = imread("../Base_de_donnees/old/faceDatabase/s1/7.pgm", CV_LOAD_IMAGE_GRAYSCALE);
+  // Mat imgPerson2 = imread("../Base_de_donnees/old/faceDatabase/s2/7.pgm", CV_LOAD_IMAGE_GRAYSCALE);
+  // Mat imgPerson3 = imread("../Base_de_donnees/old/faceDatabase/s3/1.pgm", CV_LOAD_IMAGE_GRAYSCALE);	
+  // printf("prediction sujet 1\nlabel: %d\nprediction sujet 2\nlabel: %d\n", model->predict(imgPerson1),model->predict(imgPerson2));
+  // printf("prediction sujet inconnu (3)\nlabel: %d\n", model->predict(imgPerson3));
 
-  Mat imgPerson1 = imread("../Base_de_donnees/faceDatabase/s1/7.pgm", CV_LOAD_IMAGE_GRAYSCALE);
-  Mat imgPerson2 = imread("../Base_de_donnees/faceDatabase/s2/7.pgm", CV_LOAD_IMAGE_GRAYSCALE);
-  Mat imgPerson3 = imread("../Base_de_donnees/faceDatabase/s3/1.pgm", CV_LOAD_IMAGE_GRAYSCALE);	
-  Mat imgPersonJack = imread("../Base_de_donnees/jacques/pic0.jpeg", CV_LOAD_IMAGE_COLOR);	
-  detectAndDisplay(imgPersonJack);
+  Mat imgPersonJack = imread("../Base_de_donnees/old/jacques/pic1.jpeg", CV_LOAD_IMAGE_COLOR);	
 
-  printf("prediction sujet 1\nlabel: %d\nprediction sujet 2\nlabel: %d\n", model->predict(imgPerson1),model->predict(imgPerson2));
-  printf("prediction sujet inconnu (3)\nlabel: %d\n", model->predict(imgPerson3));
+  FaceDetecter detecter;
+  int retDetect=detecter.detectAndReframe(imgPersonJack,"testDetect.jpg");
+  switch(retDetect)
+    {
+    case MANY_FACES_FOUND:
+      {
+	printf("many faces have been found on the image given, we took the heighest\n");
+      }
+      break;
+    case SINGLE_FACE_FOUND:
+      {
+	printf("just one face has been found on the image\n");
+      }
+      break;
+    case NO_FACE_FOUND:
+      {
+	printf("no face has been found on the image\n");
+      }
+      break;
+
+    }
+
   
   return 0;
 }
