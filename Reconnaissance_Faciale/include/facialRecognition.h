@@ -12,53 +12,58 @@
 #include "opencv/highgui.h"
 #include "opencv/ml.h"
 
-#define NO_FACE_FOUND -1
-#define SINGLE_FACE_FOUND 1
-#define MANY_FACES_FOUND 2
+#include "labelImage.h"
 
-class LabelImage
+class FacialRecognition
 {
  private:
-  int ID;
-  cv::Mat image;
+  /// the database of faces
+  /// should match the real  (ROM) database
+  std::vector<LabelImage> dataBase;
 
  public:
-  LabelImage(int otherID, cv::Mat otherImage)
-    {
-      ID = otherID;
-      image = otherImage;
-    }
+  FacialRecognition();
+  ~FacialRecognition();
 
-  int GetID()
-  {
-    return ID;
-  }
+  /** 
+   * read from ROM database and load images/labels into vector database (RAM)
+   * this function should be called once
+   *
+   */
+  void initDatabase ();
 
-  cv::Mat GetImage()
-  {
-    return image;
-  }
+  /** 
+   * given a person's name, this function looks for that guy in the database and load
+   * it into its vector (RAM). It creates a new label for him.
+   * 
+   * @param personName 
+   * 
+   * @return code that indicate if the person has been found
+   */
+  int readPersonFromDatabase(std::string personName);
+
+  /** 
+   * Discard a label such that we don't try to match a given face to the labeled person anymore.
+   * This function might be useful later on for speeding up the algorithm using heuristics.
+   * DO NOT REMOVE THE LABELED PERSON FROM THE DATABASE
+   */
+  void discardLabel (int label);
+  /** 
+   * Opposite of discard: if the label was discarded in database then it won't be anymore.
+   * 
+   */
+  void keepLabel (int label);
+
+  /** 
+   * given a well formated image of a face, this function check whether the guy on the picture is
+   * in the database. It returns the label of this guy if he is, or -1 otherwise.
+   * 
+   * @param img the image of the face to test
+   * 
+   * @return the label of the person, or -1 if not in database
+   */
+  int isInDatabase (cv::Mat img);
 };
 
 
-class FaceDetecter 
-{
- private:
-  cv::CascadeClassifier face_cascade;
-  cv::CascadeClassifier eyes_cascade;
-
- public:
-  inline FaceDetecter () 
-  {
-    /* paths to description of what we're looking for */
-    std::string face_cascade_name = "OpenCV-2.4.2/data/haarcascades/haarcascade_frontalface_alt.xml";
-    std::string eyes_cascade_name = "OpenCV-2.4.2/data/haarcascades/haarcascade_eye_tree_eyeglasses.xml";
-    //-- 1. Load the cascades
-    if( !face_cascade.load( face_cascade_name ) ){ printf("FaceDetecter:--(!)Error loading %s\n",face_cascade_name.c_str()); exit(-1); };
-    if( !eyes_cascade.load( eyes_cascade_name ) ){ printf("FaceDetecter:--(!)Error loading %s\n",eyes_cascade_name.c_str()); exit(-1); };
-    cv::RNG rng(12345);
-  }
-
-  int detectAndReframe(cv::Mat img,std::string pathWrite);
-};
 #endif

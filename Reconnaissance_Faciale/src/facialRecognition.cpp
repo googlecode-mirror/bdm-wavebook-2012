@@ -1,5 +1,3 @@
-#include "facialRecognition.h"
-
 #include "opencv/cv.h"
 #include "opencv/cvwimage.h"
 #include "opencv/cvaux.h"
@@ -13,6 +11,11 @@
 #include <locale>
 #include <sstream>
 #include <string> 
+
+#include "facialRecognition.h"
+#include "faceDetecter.h"
+#include "labelImage.h"
+
 
 using namespace cv;
 
@@ -79,48 +82,6 @@ void initImages()
 
 
 
-/** @function detectAndDisplay */
-int FaceDetecter::detectAndReframe( Mat frame,String pathWrite)
-{
-  std::vector<Rect> faces;
-  Mat frame_gray;
-  int ret=SINGLE_FACE_FOUND;
-
-  cvtColor(frame, frame_gray, CV_BGR2GRAY);
-  equalizeHist( frame_gray, frame_gray );
-
-  //-- Detect faces
-  face_cascade.detectMultiScale( frame_gray, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 30) );
-
-  if (faces.size()<=0)
-    {
-      return NO_FACE_FOUND;
-    }
-
-  // We now pick the biggest we've found
-  unsigned int maxSubscript=0;
-  Rect maxFace=faces[0];
-  for( unsigned int i = 1; i < faces.size(); i++ )
-    {
-      // more than one face have been found 
-      ret=MANY_FACES_FOUND;
-      // comparaison with heights of faces
-      if (faces[i].height>maxFace.height)
-	{
-	  maxFace=faces[i];
-	  maxSubscript=i;
-	}
-    }
-
-  // pick the center of the face
-  Point center( maxFace.x + maxFace.width*0.5, maxFace.y + maxFace.height*0.5 );
-  ellipse( frame, center, Size( maxFace.width*0.5, maxFace.height*0.5), 0, 0, 360, Scalar( 255, 0, 255 ), 4, 8, 0 );
-
-  Mat faceROI = frame_gray( maxFace );
-  imwrite(pathWrite.c_str() ,faceROI); // A JPG FILE IS BEING SAVED
-  printf("image written in %s\n",pathWrite.c_str());
-  return ret;
-}
 
 
 
@@ -154,8 +115,9 @@ int main (int argc,char** argv)
 
   Mat imgPersonJack = imread("../Base_de_donnees/old/jacques/pic1.jpeg", CV_LOAD_IMAGE_COLOR);	
 
+  Mat imgPersonJackReframed;
   FaceDetecter detecter;
-  int retDetect=detecter.detectAndReframe(imgPersonJack,"testDetect.jpg");
+  int retDetect=detecter.detectAndReframe(imgPersonJack,imgPersonJackReframed);
   switch(retDetect)
     {
     case MANY_FACES_FOUND:
@@ -176,6 +138,7 @@ int main (int argc,char** argv)
 
     }
 
+  imwrite("testDetect.jpg",imgPersonJackReframed);
   
   return 0;
 }
