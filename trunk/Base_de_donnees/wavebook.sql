@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client: localhost
--- Généré le : Mer 24 Octobre 2012 à 18:15
+-- Généré le : Mer 07 Novembre 2012 à 17:59
 -- Version du serveur: 5.5.24
 -- Version de PHP: 5.3.10-1ubuntu3.4
 
@@ -41,8 +41,7 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('1d36d3c6eb1da67b9e566b19c719d27a', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1', 1351093553, 'a:3:{s:9:"user_data";s:0:"";s:8:"user_obj";s:192:"O:4:"User":7:{s:2:"id";i:3;s:4:"name";s:3:"Fox";s:7:"vorname";s:5:"Megan";s:5:"email";s:21:"fox.megan@hotmail.com";s:3:"sex";s:1:"0";s:8:"password";s:7:"Sexyyyy";s:4:"date";s:10:"2012-10-11";}";s:12:"is_connected";i:1;}'),
-('e395f6654c5cbf02bd9486f60133dbc1', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.11 (KHTML, like Gecko) Ubuntu/12.04 Chromium/20.0.1132.47 Chrome/20.0.11', 1351093355, 'a:4:{s:9:"user_data";s:0:"";s:8:"notif_ok";N;s:8:"user_obj";s:192:"O:4:"User":7:{s:2:"id";i:3;s:4:"name";s:3:"Fox";s:7:"vorname";s:5:"Megan";s:5:"email";s:21:"fox.megan@hotmail.com";s:3:"sex";s:1:"0";s:8:"password";s:7:"Sexyyyy";s:4:"date";s:10:"2012-10-11";}";s:12:"is_connected";i:1;}');
+('322e22ff4b826393df88bb8acb0a4396', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.11 (KHTML, like Gecko) Ubuntu/12.04 Chromium/20.0.1132.47 Chrome/20.0.11', 1352307342, 'a:4:{s:9:"notif_err";N;s:8:"notif_ok";N;s:8:"user_obj";s:212:"O:4:"User":7:{s:2:"id";i:2;s:4:"name";s:8:"Hollande";s:7:"vorname";s:8:"Francois";s:5:"email";s:19:"president@gmail.com";s:3:"sex";s:1:"1";s:8:"password";s:20:"Le changement c''est ";s:4:"date";s:10:"2012-10-30";}";s:12:"is_connected";i:1;}');
 
 -- --------------------------------------------------------
 
@@ -59,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password_user` varchar(20) NOT NULL,
   `date_user` date NOT NULL,
   PRIMARY KEY (`id_user`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=11 ;
 
 --
 -- Contenu de la table `users`
@@ -68,7 +67,9 @@ CREATE TABLE IF NOT EXISTS `users` (
 INSERT INTO `users` (`id_user`, `name_user`, `vorname_user`, `email_user`, `sex_user`, `password_user`, `date_user`) VALUES
 (1, 'Bieber', 'Justin', 'bieber@gmail.com', 1, 'Je suis trop beau', '2012-10-23'),
 (2, 'Hollande', 'Francois', 'president@gmail.com', 1, 'Le changement c''est ', '2012-10-30'),
-(3, 'Fox', 'Megan', 'fox.megan@hotmail.com', 0, 'Sexyyyy', '2012-10-11');
+(3, 'Fox', 'Megan', 'fox.megan@hotmail.com', 0, 'Sexyyyy', '2012-10-11'),
+(8, 'Barack', 'Obama', 'barack@whitehouse.us', 1, 'president', '2012-11-07'),
+(10, 'Papa', 'Noel', 'papa.2012@noel.com', 1, 'cadeaux', '2012-11-07');
 
 -- --------------------------------------------------------
 
@@ -83,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `user_avatar` (
   `date_avatar` datetime NOT NULL,
   PRIMARY KEY (`id_avatar`),
   KEY `fk_user_id_avatar` (`id_user`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ;
 
 --
 -- Contenu de la table `user_avatar`
@@ -97,8 +98,8 @@ INSERT INTO `user_avatar` (`id_avatar`, `id_user`, `url_avatar`, `date_avatar`) 
 (5, 2, 'hollande-56545s4dg545sd5g4d5s46546.jpg', '2012-10-23 09:00:00'),
 (6, 3, 'megan_fox300a-dsqgds9559dsfgh9f95qdhg59qfsd9.jpg', '2012-10-03 00:00:00'),
 (7, 3, 'megan-fox724-sfsdgdshfsd565fd65h56fd.jpg', '2012-10-23 07:46:00'),
-(8, 3, 'Albert-Einstein-21.jpg', '2012-10-24 12:11:22'),
-(9, 3, 'Jonathan_G_Meath_portrays_Santa_Claus.jpg', '2012-10-24 12:31:49');
+(13, 8, 'article_obama.jpg', '2012-11-07 16:49:39'),
+(14, 10, 'Jonathan_G_Meath_portrays_Santa_Claus.jpg', '2012-11-07 16:54:46');
 
 -- --------------------------------------------------------
 
