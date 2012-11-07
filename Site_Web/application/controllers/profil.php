@@ -18,9 +18,11 @@ class Profil extends MemberController
 
 	public function view($user_id = NULL)
 	{
-		$user = unserialize($this->session->userdata('user_obj'));
-
-		if($user_id != NULL && is_numeric($user_id))
+		if($user_id == NULL)
+		{
+			$user = unserialize($this->session->userdata('user_obj'));
+		}
+		else if(is_numeric($user_id))
 		{
 			$user = User::getUserById($user_id);
 
@@ -28,6 +30,13 @@ class Profil extends MemberController
 			{
 				parent::show404Error();
 			}
+			
+			//On change la vue du menu
+			parent::setMenuView('menu/profils_menu');
+		}
+		else
+		{
+			parent::show404Error();
 		}
 
 		parent::loadHeader();

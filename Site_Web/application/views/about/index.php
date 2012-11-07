@@ -18,6 +18,15 @@
 			<div style="padding-left:10px;">
 				<h3>Une vaste communautée</h3>
 				<p><span class="label">WaveBook</span> compte déjà plusieurs milliers d'utilisateurs ayant partagé des millions de fichiers ! A qui le tour ?</p>
+				<p>
+					<?php
+						for($i = 0; $i < count($ruser); $i++)
+						{
+								$list_avatars = Avatar::getAvatarsByUserId($ruser[$i]->id);
+								echo '<img src="'. $list_avatars[0]->getMiniatureLink().'" class="img-polaroid avatar-little" alt="'.$ruser[$i]->vorname .' '.$ruser[$i]->name . ' est sur Wavebook !" title="'.$ruser[$i]->vorname .' '.$ruser[$i]->name . '  est sur Wavebook !" \> ';
+						}
+					?>
+				</p>
 			</div>
 		  </div>
 		  <div class="span4">

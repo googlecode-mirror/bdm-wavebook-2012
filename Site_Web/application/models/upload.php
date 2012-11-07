@@ -100,6 +100,7 @@ class Upload extends CI_Model
 		$config['max_height'] = Upload::$max_imgheight;
 		$config['overwrite'] = Upload::$file_override;
 		$config['remove_spaces'] = Upload::$file_remove_space;
+		$config['notif_ok'] = "Votre image de profil a bien été changée !";
 
 		return $config;
 	}
@@ -111,12 +112,13 @@ class Upload extends CI_Model
 	{
 		//configuration de l'upload
 		$config['upload_path'] = Upload::$upload_directory . '/' . Upload::$upload_tmp_file_directory . '/';
-		$config['allowed_types'] = Upload::$image_file_extension . '|mp3';
+		$config['allowed_types'] = Upload::$image_file_extension . '|' . Upload::$music_file_extension;
 		$config['max_size']	= Upload::$max_filesize;
 		$config['max_width'] = Upload::$max_imgwidth;
 		$config['max_height'] = Upload::$max_imgheight;
 		$config['overwrite'] = Upload::$file_override;
 		$config['remove_spaces'] = Upload::$file_remove_space;
+		$config['notif_ok'] = "Votre fichier a été envoyé sur notre serveur, vérification en cours...";
 		
 		return $config;
 	}
@@ -134,7 +136,8 @@ class Upload extends CI_Model
 		$config['max_height'] = Upload::$max_imgheight;
 		$config['overwrite'] = Upload::$file_override;
 		$config['remove_spaces'] = Upload::$file_remove_space;
-	
+		$config['notif_ok'] = "Votre fichier a bien été partagé !";
+		
 		return $config;
 	}
 	
@@ -161,11 +164,13 @@ class Upload extends CI_Model
 		{
 			//ok !
 			$data = $CI->upload->data();
+			
+			//on retient le nom et le type du fichier (pour insertion à la bdd)
 			$this->filename = $data['file_name'];
-			//$this->filetype = $this->getRealType($data['file_type']);
+			$this->filetype = $this->getRealType($data['file_ext']);
 
 			// On enregistre la notif de réussite dans une variable de session
-			$this->session->set_userdata('notif_ok','<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Bravo!</strong> Votre image de profil a bien été changée !</div>');
+			$this->session->set_userdata('notif_ok','<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Bravo!</strong>'.$config['notif_ok'].'</div>');
 			
 			$res = true;
 		}
@@ -178,8 +183,25 @@ class Upload extends CI_Model
 	*/
 	private function getRealType($type)
 	{
-		// A CODER
-		return $type;
+		$type = strtolower(substr($type, 1));
+		if(preg_match('/'.Upload::$image_file_extension.'/', $type) == 1)
+		{
+			$rtype = "image";
+		}
+		else if(preg_match('/'.Upload::$music_file_extension.'/', $type) == 1)
+		{
+			$rtype = "music";
+		}
+		else if(preg_match('/'.Upload::$video_file_extension.'/', $type))
+		{
+			$rtype = "video";
+		}
+		else
+		{
+			$rtype = "doc";
+		}
+		
+		return $rtype;
 	}
 
 	/**

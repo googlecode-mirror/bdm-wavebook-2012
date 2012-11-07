@@ -1,5 +1,5 @@
 		
-		<!-- Header (pages visiteurs uniquement) -->
+		<!-- Header (pages visiteurs uniquement) --> 
 		<header>
 			<div class="container">
 				<h1>Vraiment innovant !</h1>
@@ -16,7 +16,7 @@
 				<ul class="nav">
 				  <li><a href="<?php echo url('home'); ?>"><i class="icon-home"></i> Accueil</a></li>
 				  <li><a href="<?php echo url('home/login'); ?>"><i class="icon-hand-right"></i> Connexion</a></li>
-				  <li class="active"><a href="<?php  echo url('about'); ?>"><i class="icon-lock"></i> A Propos</a></li>
+				  <li><a href="<?php  echo url('about'); ?>"><i class="icon-lock"></i> A Propos</a></li>
 				</ul> 
 				<form class="navbar-search pull-right" method="post" action="<?php  echo url('flux/search'); ?>">
 						<input type="text" name="search_query" class="search-query" placeholder="Rechercher" />

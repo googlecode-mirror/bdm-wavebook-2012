@@ -26,7 +26,8 @@ class About extends GuestController
 	public function index()
 	{
 		parent::loadHeader();
-		$this->load->view('about/index');
+		$data['ruser'] = User::getRandomUsers(4);
+		$this->load->view('about/index', $data);
 		parent::loadFooter();
 	}
 }
