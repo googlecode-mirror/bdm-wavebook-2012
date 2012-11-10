@@ -19,7 +19,7 @@ class Profil extends MemberController
 	public function view($user_id = NULL)
 	{
 		if($user_id == NULL)
-		{
+		{		
 			$user = unserialize($this->session->userdata('user_obj'));
 		}
 		else if(is_numeric($user_id))
