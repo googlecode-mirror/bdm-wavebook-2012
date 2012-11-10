@@ -62,4 +62,58 @@ class Account extends MemberController
 		$this->load->view('account/change_avatar',$data);
 		parent::loadFooter();
 	}
+
+	public function settings()
+	{
+		parent::loadHeader();
+
+		$user = unserialize($this->session->userdata('user_obj'));
+		$data = array();
+		$data['user'] = $user;
+
+		$this->load->view('notification_zone');
+		$this->load->view('account/change_settings', $data);
+
+		parent::loadFooter();
+	}
+
+	public function settings_validation()
+	{
+		$this->load->library('form_validation');
+		$this->load->helper('form');
+		$this->form_validation->set_error_delimiters('<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button>', '</div>');
+			
+		//mise en place des regles
+		$this->form_validation->set_rules('name', 'Nom', 'required|max_length[20]');
+		$this->form_validation->set_rules('vorname', 'Prénom', 'required|max_length[20]');
+		$this->form_validation->set_rules('password', 'Mot de passe', 'required|alpha|max_length[20]');
+		$this->form_validation->set_rules('email', 'Email', 'required|valid_email|max_length[150]');
+		$this->form_validation->set_rules('sexe', 'Sexe', 'required|matches[sexe]');
+			
+		if ($this->form_validation->run() == FALSE) // echec
+		{
+			//on affiche le formulaire
+			$this->settings();
+		}
+		else // reussite
+		{
+			//creation de l'utilisateur
+			$user = unserialize($this->session->userdata('user_obj'));
+			$user->name = $this->input->post('name');
+			$user->vorname = $this->input->post('vorname');
+			$user->password = strtolower($this->input->post('password'));
+			$user->email = $this->input->post('email');
+			if($this->input->post('sexe') == "Femme") $user->sex = 0;
+			else $user->sex = 1;
+			
+			//sauvegarde de l'utilisateur
+			$user->update();
+			
+			//notification
+			$this->session->set_userdata('notif_ok','<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Modification de vos informations réussite !</strong></div>');
+			
+			//redirection sur l'accueil
+			redirect('account/settings','refresh');
+		}
+	}
 }
