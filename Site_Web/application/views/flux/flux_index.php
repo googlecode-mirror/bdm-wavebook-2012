@@ -3,11 +3,11 @@
     <section id="corps">
 		<div class="row">
 		  <div class="span8">
-			  <h1>Flux d'actualités</h1>
+			  <h2>Flux d'actualités</h2>
 			 <?php			
 				if(count($files) == 0)
 				{
-					echo '<div class="alert alert-info"><strong>Oups!</strong> Aucune actualité ...</div>';
+					echo '<div class="alert alert-info"><strong>Oups!</strong> Aucune actualitée pour le moment...</div>';
 				}
 				else
 				{
@@ -25,7 +25,7 @@
 									  <p>'.$file->desc.'</p>
 									</blockquote>
 									'.$file->getHTML().'
-									<p><i class="icon-tags"></i> Tags: '.tags($file->keywords).'</p>			
+									<p class="tags"><i class="icon-tags"></i> Tags: '.tags($file->keywords).'</p>			
 								</div>
 						</div>';
 					}

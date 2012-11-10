@@ -8,6 +8,7 @@
 		<div class="row">
 		  <div class="span8">
 			<h2>Mur de <?php echo ucfirst($user->vorname) . ' ' . ucfirst($user->name); ?> :</h2>
+			<hr/>
 			<?php
 				if(count($list_files) == 0)
 				{
@@ -29,7 +30,7 @@
 									  <p>'.$f->desc.'</p>
 									</blockquote>
 									'.$f->getHTML().'
-									<p><i class="icon-tags"></i> Tags: '.tags($f->keywords).'</p>			
+									<p class="tags"><i class="icon-tags"></i> Tags: '.tags($f->keywords).'</p>			
 								</div>
 						</div>';
 					}

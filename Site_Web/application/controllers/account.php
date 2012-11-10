@@ -84,8 +84,8 @@ class Account extends MemberController
 		$this->form_validation->set_error_delimiters('<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button>', '</div>');
 			
 		//mise en place des regles
-		$this->form_validation->set_rules('name', 'Nom', 'required|max_length[20]');
-		$this->form_validation->set_rules('vorname', 'Prénom', 'required|max_length[20]');
+		$this->form_validation->set_rules('name', 'Nom', 'required|encode_php_tags|htmlspecialchars|trim|xss_clean|max_length[20]');
+		$this->form_validation->set_rules('vorname', 'Prénom', 'required|encode_php_tags|htmlspecialchars|trim|xss_clean|max_length[20]');
 		$this->form_validation->set_rules('password', 'Mot de passe', 'required|alpha|max_length[20]');
 		$this->form_validation->set_rules('email', 'Email', 'required|valid_email|max_length[150]');
 		$this->form_validation->set_rules('sexe', 'Sexe', 'required|matches[sexe]');
@@ -110,7 +110,7 @@ class Account extends MemberController
 			$user->update();
 			
 			//notification
-			$this->session->set_userdata('notif_ok','<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Modification de vos informations réussite !</strong></div>');
+			$this->session->set_userdata('notif_ok','<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Bravo!</strong> Vos informations personnelles ont été modifiée.</div>');
 			
 			//redirection sur l'accueil
 			redirect('account/settings','refresh');

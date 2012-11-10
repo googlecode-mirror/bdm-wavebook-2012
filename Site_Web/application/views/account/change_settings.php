@@ -2,8 +2,8 @@
     <section id="corps">
 		<div class="row">
 		  <div class="span8">
-			  <h1>Informations personnelles</h1>
-			<hr />  
+			<h2>Informations personnelles</h2>
+			<hr />
 			<form class="form-horizontal" action="<?php echo url('account/settings_validation'); ?>" method="post" accept-charset="utf-8" enctype="multipart/form-data">
 				   <div class="control-group">
 					<label class="control-label" for="name">Votre nom</label>
