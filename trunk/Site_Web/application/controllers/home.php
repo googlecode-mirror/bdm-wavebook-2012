@@ -23,8 +23,8 @@ class Home extends GuestController
 		$this->form_validation->set_error_delimiters('<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button>', '</div>');
 			
 		//mise en place des regles
-		$this->form_validation->set_rules('name', 'Nom', 'required|max_length[20]');
-		$this->form_validation->set_rules('vorname', 'Prénom', 'required|max_length[20]');
+		$this->form_validation->set_rules('name', 'Nom', 'required|encode_php_tags|htmlspecialchars|trim|xss_clean|max_length[20]');
+		$this->form_validation->set_rules('vorname', 'Prénom', 'required|encode_php_tags|htmlspecialchars|trim|xss_clean|max_length[20]');
 		$this->form_validation->set_rules('password', 'Mot de passe', 'required|alpha|max_length[20]');
 		$this->form_validation->set_rules('email', 'Email', 'required|valid_email|max_length[150]');
 		$this->form_validation->set_rules('sexe', 'Sexe', 'required|matches[sexe]');

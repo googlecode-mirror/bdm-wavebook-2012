@@ -82,11 +82,11 @@ class File extends CI_Model
 	*/
 	public function getHTML()
 	{
-		$html = '<a href="'.$this->getLink().'">Télécharger le document</a>';
+		$html = '<a href="'.$this->getLink().'"><img src="'.img('document-icon.png').'" alt="Télécharger le document" title="Télécharger le document" /> Télécharger le document</a>';
 		
 		if($this->type == 'image')
 		{
-			$html = '<img src="'.$this->getLink().'" alt="Lien mort" title="Lien mort" />';
+			$html = '<img src="'.$this->getLink().'" class="post" alt="Lien mort" title="Lien mort" />';
 		}
 		else if($this->type == 'video')
 		{

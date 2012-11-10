@@ -103,7 +103,7 @@ img.avatar-big
 	width:150px;
 }
 
-div.well img, div.well audio, div.well video
+div.well img.post, div.well audio, div.well video
 {
 	margin: auto;
 	width: 520px;
@@ -124,8 +124,13 @@ div.span4
 
 div.well
 {
-	padding: 5px;
+	padding: 3px;
 	margin-left: 65px;
+}
+
+div.well p.tags
+{
+	padding-top: 3px;
 }
 
 a.brand
