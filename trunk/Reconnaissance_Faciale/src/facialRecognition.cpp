@@ -30,9 +30,6 @@ void initImages()
   // holds images and labels
   // // images for first person
 
-  LabelImage baseImage = LabelImage(1, imread("../Base_de_donnees/old/faceDatabase/s1/1.pgm", CV_LOAD_IMAGE_GRAYSCALE));
-  trainingImages.push_back(baseImage);
-
   string numDirectory;
   string numImage;
   string imgString;
@@ -82,63 +79,73 @@ void initImages()
 
 
 
+int whois (Mat personToPredict)
+{
+  Ptr<FaceRecognizer> model =  createEigenFaceRecognizer();
+  Create a new Fisherfaces model and retain all available Fisherfaces,
+  this is the most common usage of this specific FaceRecognizer:
+  
 
+  /////////////////////////////////////////////////// 
+  /////////////////////////////////////////////////// train our FaceRecognizer
+  ///////////////////////////////////////////////////
+
+  initImages();
+
+  // // This is the common interface to train all of the available cv::FaceRecognizer
+  // // implementations:
+  // //
+  model->train(images, labels);
+
+  /////////////////////////////////////////////////// 
+  /////////////////////////////////////////////////// test if the following pic belongs
+  /////////////////////////////////////////////////// 
+
+  return model->predict(personToPredict);
+}
 
 
 int main (int argc,char** argv)
 {
-  // Create a new Fisherfaces model and retain all available Fisherfaces,
-  // this is the most common usage of this specific FaceRecognizer:
-  //
-  // Ptr<FaceRecognizer> model =  createEigenFaceRecognizer();
-
-  // /////////////////////////////////////////////////// 
-  // /////////////////////////////////////////////////// train our FaceRecognizer
-  // ///////////////////////////////////////////////////
-
-  // initImages();
-
-  // // // This is the common interface to train all of the available cv::FaceRecognizer
-  // // // implementations:
-  // // //
-  // model->train(images, labels);
-
-  // /////////////////////////////////////////////////// 
-  // /////////////////////////////////////////////////// test if the following pic belongs
-  // /////////////////////////////////////////////////// 
-
-  // Mat imgPerson1 = imread("../Base_de_donnees/old/faceDatabase/s1/7.pgm", CV_LOAD_IMAGE_GRAYSCALE);
-  // Mat imgPerson2 = imread("../Base_de_donnees/old/faceDatabase/s2/7.pgm", CV_LOAD_IMAGE_GRAYSCALE);
-  // Mat imgPerson3 = imread("../Base_de_donnees/old/faceDatabase/s3/1.pgm", CV_LOAD_IMAGE_GRAYSCALE);	
-  // printf("prediction sujet 1\nlabel: %d\nprediction sujet 2\nlabel: %d\n", model->predict(imgPerson1),model->predict(imgPerson2));
-  // printf("prediction sujet inconnu (3)\nlabel: %d\n", model->predict(imgPerson3));
-
-  Mat imgPersonJack = imread("../Base_de_donnees/old/jacques/pic1.jpeg", CV_LOAD_IMAGE_COLOR);	
-
-  Mat imgPersonJackReframed;
-  FaceDetecter detecter;
-  int retDetect=detecter.detectAndReframe(imgPersonJack,imgPersonJackReframed);
-  switch(retDetect)
+  if(argc<1)
     {
-    case MANY_FACES_FOUND:
-      {
-	printf("many faces have been found on the image given, we took the heighest\n");
-      }
-      break;
-    case SINGLE_FACE_FOUND:
-      {
-	printf("just one face has been found on the image\n");
-      }
-      break;
-    case NO_FACE_FOUND:
-      {
-	printf("no face has been found on the image\n");
-      }
-      break;
-
+      printf("Please specify an argument:\n1 for face recognition\n2 reframe image\n");
+      exit(-1);
     }
+  switch(atoi(argv[1]))
+    {
+    case (1):
+      {
+	Mat imgPersonJack = imread("../Base_de_donnees/old/jacques/pic1.jpeg", CV_LOAD_IMAGE_COLOR);	
+	return whois(imgPersonJack);
+      }
+      break;
+    case (2):
+      {
+	Mat imgPersonJack = imread("../Base_de_donnees/old/jacques/pic1.jpeg", CV_LOAD_IMAGE_COLOR);	
+	Mat imgPersonJackReframed;
+	int retDetect=detecter.detectAndReframe(imgPersonJack,imgPersonJackReframed);
+	switch(retDetect)
+	  {
+	  case MANY_FACES_FOUND:
+	    {
+	      printf("many faces have been found on the image given, we took the heighest\n");
+	    }
+	    break;
+	  case SINGLE_FACE_FOUND:
+	    {
+	      printf("just one face has been found on the image\n");
+	    }
+	    break;
+	  case NO_FACE_FOUND:
+	    {
+	      printf("no face has been found on the image\n");
+	    }
+	    break;
+	  }
+	imwrite("testDetect.jpg",imgPersonJackReframed);
+      }
 
-  imwrite("testDetect.jpg",imgPersonJackReframed);
   
   return 0;
 }
