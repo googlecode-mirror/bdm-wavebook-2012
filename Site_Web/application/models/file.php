@@ -119,7 +119,39 @@ class File extends CI_Model
 
 		return $query;
 	}
-	
+
+
+	/**
+	* Fonction permettant de rechercher des fichiers par leurs tags et/ou leurs descriptions
+	*/
+	public function search($keywordToSearch, $from = 0)
+	{
+		$list_files = array();
+		$sql = 'SELECT * FROM '.File::$table.' WHERE desc_file LIKE ? OR keywords_file LIKE ? ORDER BY date_file DESC LIMIT ?,?';
+				
+		$CI =& get_instance();	
+		$query = $CI->db->query($sql,array("%$keywordToSearch%", "%$keywordToSearch%", $from, File::$file_per_page));
+				
+			foreach ($query->result() as $row)
+			{
+				$file = new File();
+
+				$file->id = $row->id_file;
+				$file->id_user = $row->id_user;
+				$file->url = $row->url_file;
+				$file->desc = $row->desc_file;
+				$file->keywords = $row->keywords_file;
+				$file->type = $row->type_file;
+				$file->date = $row->date_file;
+				
+				$list_files[] = $file;
+			}
+
+		$query->free_result();
+		
+		return $list_files;
+
+	}
 	
 	/**
 	* Fonction permettant d'afficher les informations du fichier (mode debug)
