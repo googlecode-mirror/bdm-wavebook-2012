@@ -34,7 +34,7 @@ class Account extends MemberController
 		//Upload de la nouvelle image de profil
 		$user_id = unserialize($this->session->userdata('user_obj'))->id;
 		$upload = new Upload();
-		$res = $upload->upload_avatar($user_id);
+		$res = $upload->upload_avatar($user_id, array('userfile'));
 		
 		//Verification de la conformité de l'avatar
 		// appel FaceDetection...
@@ -43,7 +43,7 @@ class Account extends MemberController
 		if($res)
 		{
 			$new_avatar = new Avatar();
-			$new_avatar->url = $upload->filename;
+			$new_avatar->url = $upload->files_uploaded[0][0];
 			$new_avatar->id_user = $user_id;
 			$new_avatar->save();
 		}

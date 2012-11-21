@@ -17,6 +17,7 @@
 		<!-- Les scripts -->
 		<script type="text/javascript" src="<?php echo js('jquery-1.8.2.min'); ?>"></script>
 		<script type="text/javascript" src="<?php echo js('bootstrap'); ?>"></script>
+		<script type="text/javascript" src="<?php echo js('script'); ?>"></script>
 	
 		<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 		<!--[if lt IE 9]>

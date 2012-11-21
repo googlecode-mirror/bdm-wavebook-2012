@@ -66,15 +66,15 @@ class Flux extends MemberController
 			$file_up = new Upload();
 			$user = unserialize($this->session->userdata('user_obj'));
 			
-			if($file_up->upload_file($user->id))
+			if($file_up->upload_file($user->id, array('userfile')))
 			{
 				// Création fichier
 				$file = new File();
 				$file->id_user = $user->id;
 				$file->desc = $this->input->post('description');
 				$file->keywords = $this->input->post('keywords');
-				$file->url = $file_up->filename;
-				$file->type = $file_up->filetype;
+				$file->url = $file_up->files_uploaded[0][0];
+				$file->type = $file_up->files_uploaded[0][1];
 
 				//sauvegarde du fichier
 				$file->save();

@@ -31,10 +31,11 @@
 					  <input type="password" name="password" id="password" placeholder="Mot de passe" value="<?php echo set_value('password'); ?>" />
 					</div>
 				  </div>
-				  <div class="control-group">
+				  <div class="control-group upload">
 					<label class="control-label" for="avatar">Votre image de profil</label>
 					<div class="controls">
-					  <input type="file" name="userfile" id="avatar" />
+					  <input type="file" name="file_1" id="avatar" />
+					  <button type="button" class="btn btn-mini btn-warning" id="add_field"><i class="icon-plus icon-white"></i></button>
 					</div>
 				  </div>
 				  <div class="control-group">
