@@ -12,6 +12,13 @@ using namespace cv;
 
 int FaceDetecter::detectAndReframe( Mat frame,Mat& imOut)
 {
+  //****************************************************
+  //****************************************************
+  // TODO: this function should reframe well and set size to a constant
+  //****************************************************
+  //****************************************************
+
+
   std::vector<Rect> faces;
   Mat frame_gray;
   int ret=SINGLE_FACE_FOUND;
