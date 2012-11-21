@@ -30,6 +30,12 @@ void initImages()
   // holds images and labels
   // // images for first person
 
+  //****************************************************
+  //****************************************************
+  // TODO: this function should read the whole database
+  //****************************************************
+  //****************************************************
+
   string numDirectory;
   string numImage;
   string imgString;
@@ -117,12 +123,15 @@ int main (int argc,char** argv)
     case (1):
       {
 	Mat imgPersonJack = imread("../Base_de_donnees/old/jacques/pic1.jpeg", CV_LOAD_IMAGE_COLOR);	
+	// Mat imgPerson = imread(argv[2], CV_LOAD_IMAGE_COLOR);	
 	return whois(imgPersonJack);
       }
       break;
     case (2):
       {
+	FaceDetecter detecter;
 	Mat imgPersonJack = imread("../Base_de_donnees/old/jacques/pic1.jpeg", CV_LOAD_IMAGE_COLOR);	
+	// Mat imgPerson = imread(argv[2], CV_LOAD_IMAGE_COLOR);	
 	Mat imgPersonJackReframed;
 	int retDetect=detecter.detectAndReframe(imgPersonJack,imgPersonJackReframed);
 	switch(retDetect)
@@ -143,9 +152,11 @@ int main (int argc,char** argv)
 	    }
 	    break;
 	  }
-	imwrite("testDetect.jpg",imgPersonJackReframed);
+	const char outputFile[]="testDetect.jpg";
+	imwrite(outputFile,imgPersonJackReframed);
+	printf("image written to %s\n",outputFile);
       }
-	}
+    }
   
   return 0;
 }
