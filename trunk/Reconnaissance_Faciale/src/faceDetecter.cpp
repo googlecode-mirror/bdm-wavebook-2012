@@ -54,11 +54,19 @@ int FaceDetecter::detectAndReframe( Mat frame,Mat& imOut)
   // ellipse( frame, center, Size( maxFace.width*0.5, maxFace.height*0.5), 0, 0, 360, Scalar( 255, 0, 255 ), 4, 8, 0 );
   ///////////////////////
 
+  //***************************************************************************
+  //***************************************************************************
+  // TODO: make the ROI (region of intereset) bigger
+  //***************************************************************************
+  //***************************************************************************
 
-  ///////////////////// TODO
-  /// this extracts the rectangle from the image,
-  /// as not all the face is on the resulting image 
-  /// we should grow the rectangle maxFace (keeping its center to the same point)
+  //***************************************************************************
+  // doesn't work
+  //***************************************************************************
+  // maxFace.height*=1.5;
+  // maxFace.width*=1.5;
+  // maxFace.x=maxFace.x-1.5*maxFace.x;
+  // maxFace.y=maxFace.y-1.5*maxFace.y;
   Mat faceROI = frame_gray( maxFace );
   imOut=faceROI;
   return ret;
