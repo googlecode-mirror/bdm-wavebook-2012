@@ -57,7 +57,7 @@ ${OPENCV_ONE_LIB_NAME} :
 	make
 
 run : main
-	bin/main $(ARG)
+	bin/main $(ARG) $(IMG)
 
 
 %.o : %.cpp
