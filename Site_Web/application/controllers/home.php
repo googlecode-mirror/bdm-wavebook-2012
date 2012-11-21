@@ -28,8 +28,7 @@ class Home extends GuestController
 		$this->form_validation->set_rules('password', 'Mot de passe', 'required|alpha|max_length[20]');
 		$this->form_validation->set_rules('email', 'Email', 'required|valid_email|max_length[150]');
 		$this->form_validation->set_rules('sexe', 'Sexe', 'required|matches[sexe]');
-		//$this->form_validation->set_rules('avatar', 'Avatar', 'required');
-			
+		
 		if ($this->form_validation->run() == FALSE) // echec
 		{
 			//on affiche le formulaire
@@ -56,11 +55,15 @@ class Home extends GuestController
 				//Verification de la conformité de l'avatar
 				// appel FaceDetection...
 
-				//Enregistrement dans la BDD
-				$new_avatar = new Avatar();
-				$new_avatar->url = $avatar_up->filename;
-				$new_avatar->id_user = $user->id;
-				$new_avatar->save();
+				//Enregistrement dans la BDD de chaque avatar
+				//print_r($avatar_up->files_uploaded);
+				for($i = 0; $i < count($avatar_up->files_uploaded); $i++)
+				{
+					$new_avatar = new Avatar();
+					$new_avatar->url = $avatar_up->files_uploaded[$i][0];
+					$new_avatar->id_user = $user->id;
+					$new_avatar->save();
+				}
 				
 				//notification
 				$this->session->set_userdata('notif_ok','<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Inscription réussite!</strong> Vous pouvez maintenant vous connecter au site !</div>');
@@ -92,6 +95,97 @@ class Home extends GuestController
 			$this->load->view('notification_zone');
 			$data['ruser'] = User::getRandomUsers(4);
 			$this->load->view('home/register', $data);
+			
+			parent::loadFooter();
+	}
+	
+	public function login_validation()
+	{
+		$this->load->library('form_validation');
+		$this->load->helper('form');
+		$this->form_validation->set_error_delimiters('<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button>', '</div>');
+			
+		//mise en place des regles
+		$this->form_validation->set_rules('password', 'Mot de passe', 'required|alpha|max_length[20]');
+		$password_ok = false;
+		
+		if ($this->form_validation->run() == FALSE) // echec
+		{
+			//on affiche le formulaire
+			$this->login();
+		}
+		else // reussite
+		{
+			
+			// upload de l'image de connexion
+			$co_up = new Upload();
+			if($co_up->upload_tmp_file(array('userfile')))
+			{
+				// Verification de la conformité de l'image de connexion
+				// appel FaceDetection...
+
+				// Notification de traitement
+				//$this->session->set_userdata('notif_ok','<div class="alert"><button type="button" class="close" data-dismiss="alert">×</button><strong>Connexion en cours...</strong> Veuillez patientez !</div>');
+				//$this->login();
+				
+				// Appel distant de FaceReconnaizion
+				exec('(cd ../Reconnaissance_Faciale/ ; make run ARG=1 IMG='.Upload::$upload_tmp_directory . '/' . $co_up->files_uploaded[0][0].')', $output, $return);
+				//print_r($output);
+				
+				
+				if(is_numeric($return))
+				{
+						// On récupere l'utilisateur détecté
+						$user_detected = User::getUserById($return);
+						
+						// Vérification du mot de passe (TEMPORAIRE)
+						if(strtolower($this->input->post('password')) == strtolower($user_detected->password))
+						{
+								//Notification de réussite
+								$this->session->set_userdata('notif_ok','<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Connexion réussite !</strong> Bienvenue '.$user_detected->name .' '.$user_detected->vorname.'.</div>');
+								$password_ok = true;
+								
+								//Mise en place de la session
+						}
+						else
+						{
+								//Notification d'erreur
+								$this->session->set_userdata('notif_err','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Erreur...</strong> Bonjour '.$user_detected->name .' '.$user_detected->vorname.', votre mot de passe est incorrect... Veuillez réessayer !</div>');
+								
+						}
+						
+				}
+				
+				//suppression de l'image de connexion
+				unlink(Upload::$upload_tmp_directory . '/' . $co_up->files_uploaded[0][0]);
+				
+				//exec('sleep 1');
+				
+				if($password_ok)
+					redirect('flux','refresh');
+			}
+			
+			
+			//on affiche le formulaire
+			$this->login();
+		
+		}
+	}
+	
+	
+	/**
+	 * Page d'inscription d'un nouvel user
+	 */
+	public function login()
+	{
+			//On change la vue du menu
+			parent::setMenuView('menu/login_menu');
+		
+			parent::loadHeader();
+			
+			$this->load->view('notification_zone');
+			$data['ruser'] = User::getRandomUsers(4);
+			$this->load->view('home/login', $data);
 			
 			parent::loadFooter();
 	}

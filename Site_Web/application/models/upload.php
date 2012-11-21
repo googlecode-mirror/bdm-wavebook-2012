@@ -14,8 +14,8 @@ class Upload extends CI_Model
 	*/
 
 	public static $upload_directory = '../Base_de_donnees/upload';
+	public static $upload_tmp_directory = '../Base_de_donnees/tmp';
 	public static $upload_file_directory = 'files';
-	public static $upload_tmp_file_directory = 'tmp';
 	public static $upload_avatar_directory = 'profile';
 	public static $upload_avatar_mini_directory = 'profile/mini';
 
@@ -29,14 +29,16 @@ class Upload extends CI_Model
 	private static $max_filesize = 10000;
 	private static $max_imgwidth = 3000;
 	private static $max_imgheight = 3000;
+	
+	private static $max_multiple_file = 5;
 
 
 	/**
 	* Attributs
 	**/
 	public $id_user;
-	public $filename;
-	public $filetype;
+	public $files_available;
+	public $files_uploaded;
 
 	
 	/**
@@ -45,43 +47,52 @@ class Upload extends CI_Model
 	public function __construct()
 	{
 		parent::__construct();
+		
+		$this->id_user = -1;
+		$this->files_available = array();
+		$this->files_uploaded = array();
 	}
 	
 	/**
-	* Demande d'un upload d'une image de profil (utilisée pour la reconnaissance)
+	* Demande d'un upload d'une/des image(s) de profil (utilisée pour la reconnaissance)
 	*/
-	public function upload_avatar($id_user)
+	public function upload_avatar($id_user, $user_files = array())
 	{
 		$this->id_user = $id_user;
+		$this->files_available = $user_files;
+		
 		$config = $this->configure_avatar_upload();
 
 		$res = $this->launch_upload($config);
 
 		if($res)
 		{
-			$this->create_miniature();
+			for($i = 0; $i < count($this->files_uploaded); $i++)
+				$this->create_miniature($this->files_uploaded[$i][0]);
 		}
 
 		return $res;
 	}
 
 	/**
-	* Demande d'un upload d'une image ou d'un son dans un fichier temporaire (utilisée lors de la connexion)
+	* Demande d'un upload d'images ou/et de sons dans un fichier temporaire (utilisée lors de la connexion)
 	*/
-	public function upload_tmp_file($id_user)
+	public function upload_tmp_file($user_files = array())
 	{
-		$this->id_user = $id_user;
+		$this->files_available = $user_files;
+		
 		$config = $this->configure_tmp_upload();
-
 		return $this->launch_upload($config);
 	}
 
 	/**
 	* Demande d'un upload d'un fichier de partage (non-utilisée pour la reconnaissance)
 	*/
-	public function upload_file($id_user)
+	public function upload_file($id_user, $user_files = array())
 	{
 		$this->id_user = $id_user;
+		$this->files_available = $user_files;
+
 		$config = $this->configure_file_upload();
 
 		return $this->launch_upload($config);
@@ -111,7 +122,7 @@ class Upload extends CI_Model
 	private function configure_tmp_upload()
 	{
 		//configuration de l'upload
-		$config['upload_path'] = Upload::$upload_directory . '/' . Upload::$upload_tmp_file_directory . '/';
+		$config['upload_path'] =  Upload::$upload_tmp_directory . '/';
 		$config['allowed_types'] = Upload::$image_file_extension . '|' . Upload::$music_file_extension;
 		$config['max_size']	= Upload::$max_filesize;
 		$config['max_width'] = Upload::$max_imgwidth;
@@ -142,39 +153,70 @@ class Upload extends CI_Model
 	}
 	
 	/**
-	* Lancement de l'upload
+	* Lancement de l'upload (gere le multi-upload)
 	*/
 	private function launch_upload($config)
 	{
-
+		$res = false;
+		
 		//appel de la library d'upload
 		$CI =& get_instance();	
 		$CI->load->library('upload', $config);
-
-		if (!$CI->upload->do_upload()) //on teste si l'upload fonctionne
+		
+		//Si pas de fichier spécifiés à l'entrée
+		//MODE PAR DEFAUT = upload de tous les fichiers file_x
+		if(count($this->files_available) == 0)
 		{
-			//erreur !
-			// On enregistre l'erreur dans une variable de session
-			$this->session->set_userdata('notif_err', $this->upload->display_errors('<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button>', '</div>'));
-
-			$res = false;
-
+			for ($i = 1; $i <= count($_FILES) && $i <= Upload::$max_multiple_file; $i++ )
+			{
+				if(isset($_FILES['file_'.$i]))
+				{
+					if(!empty($_FILES['file_'.$i]['name']))
+					{
+						array_push($this->files_available,'file_'.$i);
+					}
+				}
+			}
+		}
+		
+		// DEBUG: 
+		//print_r($this->files_available);
+		// Lancement de l'upload (fichier après fichier)
+		for($i = 0 ; $i < count($this->files_available); $i++)
+		{
+			if(!$CI->upload->do_upload($this->files_available[$i])) //on teste si l'upload fonctionne
+			{
+				//erreur !
+				// On enregistre l'erreur dans une variable de session
+				$this->session->set_userdata('notif_err', $this->upload->display_errors('<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button>', '</div>'));
+			}
+			else
+			{
+				
+			// On retient le nom et le type du fichier (pour insertion à la bdd)
+			$data = $this->upload->data($this->files_available[$i]);
+			$new_file = array();
+			$new_file[] = $data['file_name'];
+			$new_file[] = $this->getRealType($data['file_ext']);
+			
+			// Ajout au tableau des fichiers uploadés
+			array_push($this->files_uploaded, $new_file);
+			}
+		}
+		
+		// Vérification de réussite (au moins un fichier uploadé)
+		if(count($this->files_uploaded) > 0)
+		{
+			$res = true;
+			$this->session->set_userdata('notif_err','');
+			$this->session->set_userdata('notif_ok','<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Bravo!</strong> '.$config['notif_ok'].'</div>');
 		}
 		else
 		{
-			//ok !
-			$data = $CI->upload->data();
-			
-			//on retient le nom et le type du fichier (pour insertion à la bdd)
-			$this->filename = $data['file_name'];
-			$this->filetype = $this->getRealType($data['file_ext']);
-
-			// On enregistre la notif de réussite dans une variable de session
-			$this->session->set_userdata('notif_ok','<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Bravo!</strong>'.$config['notif_ok'].'</div>');
-			
-			$res = true;
+			if(count($this->files_available) == 0)
+				$this->session->set_userdata('notif_ok','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Erreur!</strong> Veuillez choisir au moins un fichier !</div>');
 		}
-
+	
 		return $res;
 	}
 
@@ -207,15 +249,15 @@ class Upload extends CI_Model
 	/**
 	* Méthode permettant de créer une miniature de l'image de profil (150x150px)
 	*/
-	private function create_miniature()
+	private function create_miniature($filename)
 	{
 		$CI =& get_instance();	
 		$data = $CI->upload->data();
 		$CI->load->library('image_lib');
 
 		// Chemins
-		$real_path = Upload::$upload_directory . '/' . $this->id_user . '/' . Upload::$upload_avatar_directory . '/' . $this->filename;
-		$mini_path = Upload::$upload_directory . '/' . $this->id_user . '/' . Upload::$upload_avatar_mini_directory . '/' . $this->filename;
+		$real_path = Upload::$upload_directory . '/' . $this->id_user . '/' . Upload::$upload_avatar_directory . '/' . $filename;
+		$mini_path = Upload::$upload_directory . '/' . $this->id_user . '/' . Upload::$upload_avatar_mini_directory . '/' . $filename;
 
 
 		// Configuration du redimentionnement de la copie
