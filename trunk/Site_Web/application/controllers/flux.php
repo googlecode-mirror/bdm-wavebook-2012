@@ -92,4 +92,38 @@ class Flux extends MemberController
 			}
 		}
 	}
+
+	
+	public function search()
+	{
+		//On change le titre de la page
+		parent::setPageName('Recherche');
+		
+		parent::loadHeader();
+
+		$this->load->view('notification_zone');
+
+		// Pour valider form
+		$this->load->library('form_validation');
+		$this->load->helper('form');
+		$this->form_validation->set_error_delimiters('<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button>', '</div>');
+
+		//mise en place des regles
+		$this->form_validation->set_rules('search_query', 'recherche', 'required|encode_php_tags|htmlspecialchars|trim|xss_clean|max_length[200]');
+
+		if ($this->form_validation->run() == FALSE) //echec formulaire
+			$this->index(); //affiche l'index si erreur
+		else
+		{
+			// Requête SQL de recherche			
+			$files = File::search($this->input->post('search_query'));
+			
+			//Fabriquer tableau
+			$data['files'] = $files;			
+		
+			$this->load->view('flux/flux_search', $data);
+		}
+
+		parent::loadFooter();
+	}
 }
