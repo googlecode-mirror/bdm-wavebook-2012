@@ -55,7 +55,7 @@ void initImages()
 
 	  imgString = "../Base_de_donnees/old/faceDatabase/s"+ numDirectory + numImage;
 
-	  baseImage = LabelImage(i, imread(imgString, CV_LOAD_IMAGE_GRAYSCALE));
+	  LabelImage baseImage = LabelImage(i, imread(imgString, CV_LOAD_IMAGE_GRAYSCALE));
 	  trainingImages.push_back(baseImage);
 	}
     }
@@ -82,8 +82,8 @@ void initImages()
 int whois (Mat personToPredict)
 {
   Ptr<FaceRecognizer> model =  createEigenFaceRecognizer();
-  Create a new Fisherfaces model and retain all available Fisherfaces,
-  this is the most common usage of this specific FaceRecognizer:
+  //Create a new Fisherfaces model and retain all available Fisherfaces,
+  //this is the most common usage of this specific FaceRecognizer:
   
 
   /////////////////////////////////////////////////// 
@@ -145,7 +145,7 @@ int main (int argc,char** argv)
 	  }
 	imwrite("testDetect.jpg",imgPersonJackReframed);
       }
-
+	}
   
   return 0;
 }
