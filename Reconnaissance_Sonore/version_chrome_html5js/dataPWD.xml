@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pwds>
+  <user>
+	  <login>baptiste</login>
+	  <pwd>choucroute</pwd>
+  </user>
+  <user>
+	  <login>quentin</login>
+	  <pwd>saucisse</pwd>
+  </user>
+</pwds>
