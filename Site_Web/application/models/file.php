@@ -127,25 +127,51 @@ class File extends CI_Model
 	public function search($keywordToSearch, $from = 0)
 	{
 		$list_files = array();
-		$sql = 'SELECT * FROM '.File::$table.' WHERE desc_file LIKE ? OR keywords_file LIKE ? ORDER BY date_file DESC LIMIT ?,?';
-				
-		$CI =& get_instance();	
-		$query = $CI->db->query($sql,array("%$keywordToSearch%", "%$keywordToSearch%", $from, File::$file_per_page));
-				
-			foreach ($query->result() as $row)
+		
+		// Création de la requete SQL dynamiquement (decoupage de la chaine par espace)
+		$list_keywords = array();
+		$first = true;
+		$sql = 'SELECT * FROM '.File::$table.' WHERE';
+		foreach(explode(" ", $keywordToSearch) as $keyword)
+		{
+			$list_keywords[] = "%$keyword%";
+			$list_keywords[] = "%$keyword%";
+			
+			if(!$first)
 			{
-				$file = new File();
-
-				$file->id = $row->id_file;
-				$file->id_user = $row->id_user;
-				$file->url = $row->url_file;
-				$file->desc = $row->desc_file;
-				$file->keywords = $row->keywords_file;
-				$file->type = $row->type_file;
-				$file->date = $row->date_file;
-				
-				$list_files[] = $file;
+				$sql .= ' OR';
 			}
+			else
+			{
+				$first = false;
+			}
+			
+			$sql .= ' (desc_file LIKE ? OR keywords_file LIKE ?)';
+		}
+		
+		$sql .= ' ORDER BY date_file DESC LIMIT ?,?';
+		$list_keywords[] = $from;
+		$list_keywords[] = File::$file_per_page;
+		
+		// Execution de la requete SQL
+		$CI =& get_instance();	
+		$query = $CI->db->query($sql, $list_keywords);
+				
+		// Extraction des fichiers
+		foreach ($query->result() as $row)
+		{
+			$file = new File();
+
+			$file->id = $row->id_file;
+			$file->id_user = $row->id_user;
+			$file->url = $row->url_file;
+			$file->desc = $row->desc_file;
+			$file->keywords = $row->keywords_file;
+			$file->type = $row->type_file;
+			$file->date = $row->date_file;
+				
+			$list_files[] = $file;
+		}
 
 		$query->free_result();
 		

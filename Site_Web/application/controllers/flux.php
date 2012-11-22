@@ -94,36 +94,49 @@ class Flux extends MemberController
 	}
 
 	
-	public function search()
+	public function search($str = '')
 	{
-		//On change le titre de la page
-		parent::setPageName('Recherche');
-		
 		parent::loadHeader();
-
-		$this->load->view('notification_zone');
-
-		// Pour valider form
-		$this->load->library('form_validation');
-		$this->load->helper('form');
-		$this->form_validation->set_error_delimiters('<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button>', '</div>');
-
-		//mise en place des regles
-		$this->form_validation->set_rules('search_query', 'recherche', 'required|encode_php_tags|htmlspecialchars|trim|xss_clean|max_length[200]');
-
-		if ($this->form_validation->run() == FALSE) //echec formulaire
-			$this->index(); //affiche l'index si erreur
-		else
-		{
-			// Requête SQL de recherche			
-			$files = File::search($this->input->post('search_query'));
-			
-			//Fabriquer tableau
-			$data['files'] = $files;			
 		
-			$this->load->view('flux/flux_search', $data);
+		$str_to_search = NULL;
+		if(!empty($str)) //recherche par GET
+		{
+			$str_to_search =  urldecode(trim(htmlspecialchars($str)));
+		}
+		else //recherche par POST
+		{
+			// Pour valider form
+			$this->load->library('form_validation');
+			$this->load->helper('form');
+			$this->form_validation->set_error_delimiters('<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button>', '</div>');
+
+			//mise en place des regles
+			$this->form_validation->set_rules('search_query', 'recherche', 'required|encode_php_tags|htmlspecialchars|trim|xss_clean|max_length[200]');
+
+			if ($this->form_validation->run() != FALSE) //echec formulaire
+			{
+				$str_to_search = $this->input->post('search_query');
+			}
+			
 		}
 
+
+		// Requête SQL de recherche	
+		if($str_to_search == NULL) // pas de requetes
+		{
+				$this->index();
+		}
+		else
+		{		
+			$files = File::search($str_to_search);
+			
+			//Fabriquer tableau
+			$data['files'] = $files;
+			$data['query'] = $str_to_search;
+			$this->load->view('flux/flux_search', $data);
+		}
+		
 		parent::loadFooter();
+		
 	}
 }
