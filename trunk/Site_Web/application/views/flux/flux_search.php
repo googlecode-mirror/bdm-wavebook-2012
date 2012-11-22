@@ -3,7 +3,7 @@
     <section id="corps">
 		<div class="row">
 		  <div class="span8">
-			  <h2>Résultats de recherche pour : "<?php echo $this->input->post('search_query'); ?>"</h2>
+			  <h2>Résultats de recherche pour : "<?php echo $query; ?>"</h2>
 			<?php
 				if(count($files) == 0)
 				{
