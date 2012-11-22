@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+<body>
+  
+<p id="login">unset</p>
+<p id="pwd"></p>
+
+  
+
+<script>
+	
+$(document).ready(function()
+{
+  $.ajax({
+    type: "GET",
+    url: "dataPWD.xml",
+    dataType: "xml",
+    success: parseXml
+  });
+});
+function parseXml(xml)
+{
+  $(xml).find("user").each(function()
+  {
+    if($(this).attr("login").text() == "baptiste") {
+		$( "#login" ).append( $(this).attr("login").text() );
+		if($(this).attr("pwd").text() == "choucroute") {
+			$( "#pwd" ).append( accepted );
+		}
+	}
+  });
+
+}
+</script>
+
+</body>
+</html>
