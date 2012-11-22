@@ -8,6 +8,9 @@
 
 #include "faceDetecter.h"
 
+#define CONST_WIDTH 500
+#define CONST_HEIGHT 800
+
 using namespace cv;
 
 int FaceDetecter::detectAndReframe( Mat frame,Mat& imOut)
@@ -56,19 +59,31 @@ int FaceDetecter::detectAndReframe( Mat frame,Mat& imOut)
 
   //***************************************************************************
   //***************************************************************************
-  // TODO: make the ROI (region of intereset) bigger
+  // cropping image, we need constant constant ratio width/height
   //***************************************************************************
   //***************************************************************************
 
-  //***************************************************************************
-  // doesn't work
-  //***************************************************************************
-  // maxFace.height*=1.5;
-  // maxFace.width*=1.5;
-  // maxFace.x=maxFace.x-1.5*maxFace.x;
-  // maxFace.y=maxFace.y-1.5*maxFace.y;
+  // say the factor is 15 of the width
+  int coefW=50;
+  int coefH=3;
+  int factorWidth=(int)maxFace.width/coefW;
+  int factorHeight=(int)maxFace.height/coefH;
+  
+  Point decayFaceFactor(-factorWidth/2,-factorHeight/2);
+  Size growFaceFactor(factorWidth,factorHeight);
+  maxFace = maxFace + growFaceFactor;
+  maxFace = maxFace + decayFaceFactor;
   Mat faceROI = frame_gray( maxFace );
-  imOut=faceROI;
+
+  //***************************************************************************
+  //***************************************************************************
+  // resizing to const size
+  //***************************************************************************
+  //***************************************************************************
+
+  resize(faceROI,imOut,Size(CONST_WIDTH,CONST_HEIGHT));
+  
+
   return ret;
 }
 
