@@ -17,7 +17,8 @@
 				  <div class="control-group">
 					<label class="control-label" for="password">Votre mot de passe</label>
 					<div class="controls">
-						<input type="password" name="password" id="password" value="<?php echo set_value('password'); ?>" />
+						<input type="text" name="password" readonly="readonly" id="password" value="<?php echo set_value('password'); ?>" />
+						<input style="width: 30px; height:30px;border: 4px;background-color:transparent" id="mic" x-webkit-speech />
 					</div>
 				   </div>
 				   <div class="control-group">

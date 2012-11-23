@@ -11,7 +11,7 @@
 #include "opencv/ml.h"
 
 
-#define NO_FACE_FOUND -1
+#define NO_FACE_FOUND 0
 #define SINGLE_FACE_FOUND 1
 #define MANY_FACES_FOUND 2
 

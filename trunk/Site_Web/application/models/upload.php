@@ -18,6 +18,7 @@ class Upload extends CI_Model
 	public static $upload_file_directory = 'files';
 	public static $upload_avatar_directory = 'profile';
 	public static $upload_avatar_mini_directory = 'profile/mini';
+	public static $upload_avatar_reco_directory = 'profile/reco';
 
 	public static $image_file_extension = 'jpg|jpeg|bmp|png';
 	public static $video_file_extension = 'mp4|ogv|webm';
@@ -67,8 +68,36 @@ class Upload extends CI_Model
 
 		if($res)
 		{
+			//creation des images refactorisés
+			for($i = 0; $i < count($this->files_uploaded); $i++)
+			{
+				//echo '(cd ../Reconnaissance_Faciale/ ; make run ARG=2 IMG='.Upload::$upload_directory . '/' .$this->id_user . '/'. Upload::$upload_avatar_directory . '/' . $this->files_uploaded[$i][0].' ID='.$this->id_user.')';
+				exec('(cd ../Reconnaissance_Faciale/ ; make run ARG=2 IMG='.Upload::$upload_directory . '/' .$this->id_user . '/'. Upload::$upload_avatar_directory . '/' . $this->files_uploaded[$i][0].' ID='.$this->id_user.')', $output, $return);
+				
+				//echo $return;
+				//echo print_r($output) . 'lol';
+				
+				if($return == 0) //pas de visage
+				{
+					unlink(Upload::$upload_directory . '/' .$this->id_user . '/'. Upload::$upload_avatar_directory . '/' . $this->files_uploaded[$i][0]); //suppression de l'image d'origine
+					unset($this->files_uploaded[$i]);
+					$this->files_uploaded = array_values($this->files_uploaded);
+					$i--;
+				}
+			
+			}
+
+			//creation des miniatures
 			for($i = 0; $i < count($this->files_uploaded); $i++)
 				$this->create_miniature($this->files_uploaded[$i][0]);
+				
+			//verification de reussite
+			if(count($this->files_uploaded) == 0)
+			{
+				$res = false;
+				$this->session->set_userdata('notif_err','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Attention !</strong> Aucun visage n\'a été détecté sur l\'image !</div>');
+				$this->session->set_userdata('notif_ok','');
+			}
 		}
 
 		return $res;
@@ -82,7 +111,34 @@ class Upload extends CI_Model
 		$this->files_available = $user_files;
 		
 		$config = $this->configure_tmp_upload();
-		return $this->launch_upload($config);
+		$res = $this->launch_upload($config);
+		
+		if($res)
+		{
+			//creation des images refactorisés
+			for($i = 0; $i < count($this->files_uploaded); $i++)
+			{
+				exec('(cd ../Reconnaissance_Faciale/ ; make run ARG=2 IMG='.Upload::$upload_tmp_directory . '/' . $this->files_uploaded[$i][0].')', $output, $return);
+				if($return == 0) //pas de visage
+				{
+					unlink(base_url() . Upload::$upload_tmp_directory . '/' . $this->files_uploaded[$i][0]); //suppression de l'image d'origine
+					unset($this->files_uploaded[$i]);
+					$this->files_uploaded = array_values($this->files_uploaded);
+					$i--;
+				}
+			}	
+				
+			//verification de reussite
+			if(count($this->files_uploaded) == 0)
+			{
+				$res = false;
+				$this->session->set_userdata('notif_err','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Attention !</strong> Aucun visage n\'a été détecté sur l\'image !</div>');
+				$this->session->set_userdata('notif_ok','');
+			}
+				
+		}
+	
+		return $res;
 	}
 
 	/**
@@ -214,7 +270,10 @@ class Upload extends CI_Model
 		else
 		{
 			if(count($this->files_available) == 0)
-				$this->session->set_userdata('notif_ok','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Erreur!</strong> Veuillez choisir au moins un fichier !</div>');
+			{
+				$this->session->set_userdata('notif_err','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Erreur!</strong> Veuillez choisir au moins un fichier !</div>');
+				$this->session->set_userdata('notif_ok','');
+			}
 		}
 	
 		return $res;
@@ -286,8 +345,5 @@ class Upload extends CI_Model
 
 
 	}
-
-
-
 
 }

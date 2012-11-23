@@ -28,6 +28,7 @@ class Home extends GuestController
 		$this->form_validation->set_rules('password', 'Mot de passe', 'required|alpha|max_length[20]');
 		$this->form_validation->set_rules('email', 'Email', 'required|valid_email|max_length[150]');
 		$this->form_validation->set_rules('sexe', 'Sexe', 'required|matches[sexe]');
+		$this->form_validation->set_rules('cgu', 'Conditions générales d\'utilisation', 'required');
 		
 		if ($this->form_validation->run() == FALSE) // echec
 		{
@@ -109,28 +110,17 @@ class Home extends GuestController
 		$this->form_validation->set_rules('password', 'Mot de passe', 'required|alpha|max_length[20]');
 		$password_ok = false;
 		
-		if ($this->form_validation->run() == FALSE) // echec
-		{
-			//on affiche le formulaire
-			$this->login();
-		}
-		else // reussite
+		if ($this->form_validation->run() != FALSE) // reussite
 		{
 			
 			// upload de l'image de connexion
 			$co_up = new Upload();
 			if($co_up->upload_tmp_file(array('userfile')))
-			{
-				// Verification de la conformité de l'image de connexion
-				// appel FaceDetection...
-
-				// Notification de traitement
-				//$this->session->set_userdata('notif_ok','<div class="alert"><button type="button" class="close" data-dismiss="alert">×</button><strong>Connexion en cours...</strong> Veuillez patientez !</div>');
-				//$this->login();
-				
+			{	
 				// Appel distant de FaceReconnaizion
 				exec('(cd ../Reconnaissance_Faciale/ ; make run ARG=1 IMG='.Upload::$upload_tmp_directory . '/' . $co_up->files_uploaded[0][0].')', $output, $return);
 				//print_r($output);
+				//echo $return;
 				
 				
 				if(is_numeric($return))
@@ -138,38 +128,46 @@ class Home extends GuestController
 						// On récupere l'utilisateur détecté
 						$user_detected = User::getUserById($return);
 						
-						// Vérification du mot de passe (TEMPORAIRE)
-						if(strtolower($this->input->post('password')) == strtolower($user_detected->password))
+						// Securité : on verifie que l'utilisateur detecte existe deja
+						if($user_detected != NULL)
 						{
+							// Vérification du mot de passe
+							if(strtolower($this->input->post('password')) == strtolower($user_detected->password))
+							{
 								//Notification de réussite
 								$this->session->set_userdata('notif_ok','<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Connexion réussite !</strong> Bienvenue '.$user_detected->name .' '.$user_detected->vorname.'.</div>');
 								$password_ok = true;
 								
 								//Mise en place de la session
+								$this->session->userdata('user_obj',  serialize($user_detected));
+								$this->session->userdata('is_connected', 1);
+							}
+							else
+							{
+								//Notification d'erreur
+								$this->session->set_userdata('notif_err','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Erreur...</strong> Bonjour '.$user_detected->name .' '.$user_detected->vorname.', votre mot de passe est incorrect... Veuillez réessayer !</div>');
+								$this->session->set_userdata('notif_ok','');
+							}
 						}
 						else
 						{
-								//Notification d'erreur
-								$this->session->set_userdata('notif_err','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Erreur...</strong> Bonjour '.$user_detected->name .' '.$user_detected->vorname.', votre mot de passe est incorrect... Veuillez réessayer !</div>');
-								
+							//Notification d'erreur
+							$this->session->set_userdata('notif_err','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Erreur...</strong> Aucun utilisateur a été trouvé... Veuillez réessayer !</div>');
+							$this->session->set_userdata('notif_ok','');
 						}
-						
 				}
 				
-				//suppression de l'image de connexion
+				//suppression de l'image de connexion et de l'image formaté
 				unlink(Upload::$upload_tmp_directory . '/' . $co_up->files_uploaded[0][0]);
-				
-				//exec('sleep 1');
+				unlink(Upload::$upload_tmp_directory . '/R' . $co_up->files_uploaded[0][0]);
 				
 				if($password_ok)
 					redirect('flux','refresh');
 			}
-			
-			
-			//on affiche le formulaire
-			$this->login();
-		
 		}
+		
+		//on affiche le formulaire
+		$this->login();
 	}
 	
 	
