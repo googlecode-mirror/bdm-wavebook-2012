@@ -93,7 +93,9 @@ class Flux extends MemberController
 		}
 	}
 
-	
+	/**
+	 * Page de recherche
+	 */
 	public function search($str = '')
 	{
 		parent::loadHeader();

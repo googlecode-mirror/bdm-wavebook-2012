@@ -8,8 +8,8 @@
 
 #include "faceDetecter.h"
 
-#define CONST_WIDTH 500
-#define CONST_HEIGHT 800
+#define CONST_WIDTH 600
+#define CONST_HEIGHT 750
 
 using namespace cv;
 
@@ -67,12 +67,36 @@ int FaceDetecter::detectAndReframe( Mat frame,Mat& imOut)
   int coefW=50;
   int coefH=3;
   int factorWidth=(int)maxFace.width/coefW;
-  int factorHeight=(int)maxFace.height/coefH;
-  
+  int factorHeight=(int)maxFace.height/coefH;  
   Point decayFaceFactor(-factorWidth/2,-factorHeight/2);
   Size growFaceFactor(factorWidth,factorHeight);
   maxFace = maxFace + growFaceFactor;
   maxFace = maxFace + decayFaceFactor;
+  
+  
+  //now we set aspect ratio to final one
+  int ratio = CONST_HEIGHT / CONST_WIDTH;
+  int myRatio = maxFace.height / maxFace.width;
+  Point keepAOffset;
+  Size keepADecay;
+  if (!myRatio<ratio)
+  {
+	  //increase y
+
+	keepAOffset=Point(-(ratio*maxFace.height-maxFace.width)/2,0);
+	keepADecay=Size((ratio*maxFace.height-maxFace.width),0);
+  }
+  else
+  {
+	  //increase x
+	keepAOffset=Point(0,-(ratio*maxFace.width-maxFace.height)/2);
+	keepADecay=Size(0,(ratio*maxFace.width-maxFace.height));
+  }
+
+  maxFace = maxFace + keepAOffset;
+  maxFace = maxFace + keepADecay;
+  std::cout<<maxFace.width<<" "<<maxFace.height<<std::endl;
+ 
   Mat faceROI = frame_gray( maxFace );
 
   //***************************************************************************

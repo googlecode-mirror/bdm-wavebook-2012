@@ -58,7 +58,8 @@ ${OPENCV_ONE_LIB_NAME} :
 
 run : main
 	bin/main $(ARG) $(IMG) $(ID)
-
+	 
+	
 %.o : %.cpp
 	$(CC) $(CFLAGS) $(IFLAGS) $(LFGLAGS) -c $<
 	mv $@ objects/

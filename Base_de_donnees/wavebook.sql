@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client: localhost
--- Généré le : Mer 07 Novembre 2012 à 17:59
+-- Généré le : Ven 23 Novembre 2012 à 21:59
 -- Version du serveur: 5.5.24
 -- Version de PHP: 5.3.10-1ubuntu3.4
 
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('322e22ff4b826393df88bb8acb0a4396', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.11 (KHTML, like Gecko) Ubuntu/12.04 Chromium/20.0.1132.47 Chrome/20.0.11', 1352307342, 'a:4:{s:9:"notif_err";N;s:8:"notif_ok";N;s:8:"user_obj";s:212:"O:4:"User":7:{s:2:"id";i:2;s:4:"name";s:8:"Hollande";s:7:"vorname";s:8:"Francois";s:5:"email";s:19:"president@gmail.com";s:3:"sex";s:1:"1";s:8:"password";s:20:"Le changement c''est ";s:4:"date";s:10:"2012-10-30";}";s:12:"is_connected";i:1;}');
+('2490a102ec4a6b5e424b3679432e520f', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.11 (KHTML, like Gecko) Ubuntu/12.04 Chromium/20.0.1132.47 Chrome/20.0.11', 1353703563, 'a:4:{s:8:"user_obj";s:188:"O:4:"User":7:{s:2:"id";i:12;s:4:"name";s:5:"McFly";s:7:"vorname";s:6:"Johnny";s:5:"email";s:16:"mcfly@unistra.fr";s:3:"sex";s:1:"1";s:8:"password";s:4:"papa";s:4:"date";s:10:"2012-11-23";}";s:12:"is_connected";i:1;s:9:"notif_err";N;s:8:"notif_ok";s:0:"";}');
 
 -- --------------------------------------------------------
 
@@ -58,18 +58,14 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password_user` varchar(20) NOT NULL,
   `date_user` date NOT NULL,
   PRIMARY KEY (`id_user`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=11 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=13 ;
 
 --
 -- Contenu de la table `users`
 --
 
 INSERT INTO `users` (`id_user`, `name_user`, `vorname_user`, `email_user`, `sex_user`, `password_user`, `date_user`) VALUES
-(1, 'Bieber', 'Justin', 'bieber@gmail.com', 1, 'Je suis trop beau', '2012-10-23'),
-(2, 'Hollande', 'Francois', 'president@gmail.com', 1, 'Le changement c''est ', '2012-10-30'),
-(3, 'Fox', 'Megan', 'fox.megan@hotmail.com', 0, 'Sexyyyy', '2012-10-11'),
-(8, 'Barack', 'Obama', 'barack@whitehouse.us', 1, 'president', '2012-11-07'),
-(10, 'Papa', 'Noel', 'papa.2012@noel.com', 1, 'cadeaux', '2012-11-07');
+(12, 'McFly', 'Johnny', 'mcfly@unistra.fr', 1, 'papa', '2012-11-23');
 
 -- --------------------------------------------------------
 
@@ -84,22 +80,16 @@ CREATE TABLE IF NOT EXISTS `user_avatar` (
   `date_avatar` datetime NOT NULL,
   PRIMARY KEY (`id_avatar`),
   KEY `fk_user_id_avatar` (`id_user`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=34 ;
 
 --
 -- Contenu de la table `user_avatar`
 --
 
 INSERT INTO `user_avatar` (`id_avatar`, `id_user`, `url_avatar`, `date_avatar`) VALUES
-(1, 1, 'justin-bieber-5555115516ds5gfd5s5fds.jpg', '2012-10-22 00:00:00'),
-(2, 1, 'images-bieber-sdsdg565655s5.jpg', '2012-10-16 00:00:00'),
-(3, 1, 'hqdefault-56955fdg5f6d5h56f5dsh56h5fd56h5.jpg', '2012-10-23 11:00:00'),
-(4, 2, 'hollande-mdr-9556565665566554sqffdsqf6556f56ds.jpg', '2012-10-03 00:00:00'),
-(5, 2, 'hollande-56545s4dg545sd5g4d5s46546.jpg', '2012-10-23 09:00:00'),
-(6, 3, 'megan_fox300a-dsqgds9559dsfgh9f95qdhg59qfsd9.jpg', '2012-10-03 00:00:00'),
-(7, 3, 'megan-fox724-sfsdgdshfsd565fd65h56fd.jpg', '2012-10-23 07:46:00'),
-(13, 8, 'article_obama.jpg', '2012-11-07 16:49:39'),
-(14, 10, 'Jonathan_G_Meath_portrays_Santa_Claus.jpg', '2012-11-07 16:54:46');
+(31, 12, 'johnny-halliday_22.jpg', '2012-11-23 18:57:47'),
+(32, 12, 'johnnyhallyday.jpg', '2012-11-23 18:57:47'),
+(33, 12, 'johnny_hallyday.jpg', '2012-11-23 18:57:47');
 
 -- --------------------------------------------------------
 
@@ -117,17 +107,7 @@ CREATE TABLE IF NOT EXISTS `user_file` (
   `url_file` varchar(200) NOT NULL,
   PRIMARY KEY (`id_file`),
   KEY `fk_user_id_file` (`id_user`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
-
---
--- Contenu de la table `user_file`
---
-
-INSERT INTO `user_file` (`id_file`, `id_user`, `type_file`, `desc_file`, `keywords_file`, `date_file`, `url_file`) VALUES
-(1, 3, 'video', 'La nature, c''est tellement beau !', 'nature, eau, herbe', '2012-10-24 05:00:00', 'Nature.mp4'),
-(2, 3, 'video', 'Les legos, c''est cooooooll :D', 'lego, construction', '2012-10-24 15:00:00', 'test.ogv'),
-(3, 2, 'music', 'Je kiff cette zik !', 'gangnam style, youtube, hit, 2012', '2012-10-24 10:25:19', 'Gangnam_Style.ogg'),
-(4, 2, 'image', 'Magnifique...', 'lumia, nokia, wp8, microsoft', '2012-10-24 20:15:00', 'nokia-lumia-920-820-hands-on-07-640x426.jpg');
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
 
 --
 -- Contraintes pour les tables exportées

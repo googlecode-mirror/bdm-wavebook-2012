@@ -35,9 +35,6 @@ class Account extends MemberController
 		$user_id = unserialize($this->session->userdata('user_obj'))->id;
 		$upload = new Upload();
 		$res = $upload->upload_avatar($user_id, array('userfile'));
-		
-		//Verification de la conformité de l'avatar
-		// appel FaceDetection...
 
 		//Enregistrement dans la BDD
 		if($res)

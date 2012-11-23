@@ -28,7 +28,8 @@
 				  <div class="control-group">
 					<label class="control-label" for="password">Votre mot de passe</label>
 					<div class="controls">
-					  <input type="password" name="password" id="password" placeholder="Mot de passe" value="<?php echo set_value('password'); ?>" />
+					  <input type="text" name="password"  readonly="readonly" id="password" placeholder="Mot de passe" value="<?php echo set_value('password'); ?>" />
+					  <input style="width: 30px; height:30px;border: 4px;background-color:transparent" id="mic" x-webkit-speech />
 					</div>
 				  </div>
 				  <div class="control-group upload">
@@ -43,6 +44,11 @@
 					<div class="controls">
 						<input type="radio" name="sexe" id="sexe" value="Homme"  <?php echo set_radio('sexe', 'Homme', TRUE); ?> /> Homme<br/>
 						<input type="radio" name="sexe" value="Femme" <?php echo set_radio('sexe', 'Femme');?> /> Femme
+					</div>
+				   </div>
+				     <div class="control-group">
+					<div class="controls">
+						<input type="checkbox" name="cgu" id="cgu" value="1" /> J'ai lu, compris et j'accepte les <a href="<?php echo base_url() . 'assets/docs/Charte.pdf'; ?>" target="_blank">termes et conditions</a>.<br/>
 					</div>
 				   </div>
 				   <div class="control-group">

@@ -9,7 +9,7 @@ class MemberController extends MY_Controller
 		parent::__construct();
 		
 		// Test uniquement !
-		$this->session->set_userdata('user_obj', serialize(User::getUserById(2)));
+		$this->session->set_userdata('user_obj', serialize(User::getUserById(12)));
 		$this->session->set_userdata('is_connected',1);
 
 		/*

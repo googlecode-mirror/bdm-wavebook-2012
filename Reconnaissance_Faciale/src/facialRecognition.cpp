@@ -35,7 +35,7 @@ std::vector<int> labels;
 
 void initImages()
 {
-  string filepath,filepathSub, baseName="../Base_de_donnees/upload/", dirSub="/profile/";
+  string filepath,filepathSub, baseName="../Base_de_donnees/upload/", dirSub="/profile/reco/";
   DIR *dp,*dpSub;
   struct dirent *dirp,*dirpSub;
   struct stat filestat,filestatSub;
@@ -161,6 +161,7 @@ int main (int argc,char** argv)
 	  case NO_FACE_FOUND:
 	    {
 	      printf("no face has been found on the image\n");
+	      return retDetect;
 	    }
 	    break;
 	  }
@@ -168,17 +169,18 @@ int main (int argc,char** argv)
 	  {
 	    // case the image is given for database purpose
 	    // extra parameter is id
-	    fileOut=string("../Base_de_donnees/upload/")+string(argv[3])+string("/reco/R")+fileOut;
+	    fileOut=string("../Base_de_donnees/upload/")+string(argv[3])+string("/profile/reco/R")+fileOut;
 	  }
 	else
 	  {
 	    // case the image is just for single face recognition
-	    fileOut="R"+fileOut;
+	    fileOut=string("../Base_de_donnees/tmp/R")+fileOut;
 	  }
 	if (imwrite(fileOut.c_str(),imgPersonReframed))
 	  printf("image written to %s\n",fileOut.c_str());
 	else
 	  printf("failed to write image, check name validity: %s\n",fileOut.c_str());
+	  printf("%d\n\n",retDetect);
 	return retDetect;
       }
     }

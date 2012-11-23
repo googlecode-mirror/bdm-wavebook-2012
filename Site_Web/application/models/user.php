@@ -208,9 +208,15 @@ class User extends CI_Model
 	private function createUserSpace()
 	{
 		 mkdir($this->getUserDir(), 0777);
+		 exec('(cd '.$this->getUserDir() . '; echo "<h1>Access Denied !</h1>" > index.php)');
 		 mkdir($this->getUserFileDir(), 0777);
+		 exec('(cd '.$this->getUserFileDir() . '; echo "<h1>Access Denied !</h1>" > index.php)');
 		 mkdir($this->getUserAvatarDir(), 0777);
+		 exec('(cd '.$this->getUserAvatarDir() . '; echo "<h1>Access Denied !</h1>" > index.php)');
+		 mkdir($this->getUserAvatarRecoDir(), 0777);
+		 exec('(cd '.$this->getUserAvatarRecoDir() . '; echo "<h1>Access Denied !</h1>" > index.php)');
 		 mkdir($this->getUserAvatarMiniDir(), 0777);
+		 exec('(cd '.$this->getUserAvatarMiniDir() . '; echo "<h1>Access Denied !</h1>" > index.php)');
 	}
 	
 	/**
@@ -296,7 +302,15 @@ class User extends CI_Model
 	*/
 	public function getUserAvatarMiniDir()
 	{
-		return$this->getUserDir() . '/' . Upload::$upload_avatar_mini_directory;
+		return $this->getUserDir() . '/' . Upload::$upload_avatar_mini_directory;
+	}
+	
+	/**
+	* Fonction permettant de retourner l'url complete du repertoire des images refactorées (pour reconnaissance) des avatars de l'utilisateur
+	*/
+	public function getUserAvatarRecoDir()
+	{
+		return $this->getUserDir() . '/' . Upload::$upload_avatar_reco_directory;
 	}
 	
 	
