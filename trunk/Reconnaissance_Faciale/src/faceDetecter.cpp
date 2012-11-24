@@ -8,8 +8,8 @@
 
 #include "faceDetecter.h"
 
-#define CONST_WIDTH 600
-#define CONST_HEIGHT 750
+#define CONST_WIDTH 92
+#define CONST_HEIGHT 112
 
 using namespace cv;
 
@@ -34,6 +34,7 @@ int FaceDetecter::detectAndReframe( Mat frame,Mat& imOut)
 
   if (faces.size()<=0)
     {
+      printf("no face found on the image\n");
       return NO_FACE_FOUND;
     }
 
@@ -50,6 +51,21 @@ int FaceDetecter::detectAndReframe( Mat frame,Mat& imOut)
 	}
     }
 
+  switch(ret)
+    {
+    case MANY_FACES_FOUND:
+      {
+	printf("many faces have been found on the image given, we took the heighest\n");
+      }
+      break;
+    case SINGLE_FACE_FOUND:
+      {
+	printf("just one face has been found on the image\n");
+      }
+      break;
+    }
+
+
   /////////////////////// this codes create an ellipse around the face on the frame image
   /////////////////////// useful for debuging
   // pick the center of the face
@@ -59,21 +75,29 @@ int FaceDetecter::detectAndReframe( Mat frame,Mat& imOut)
 
   //***************************************************************************
   //***************************************************************************
-  // cropping image, we need constant constant ratio width/height
+  // cropping image
   //***************************************************************************
   //***************************************************************************
 
-  // say the factor is 15 of the width
-  int coefW=50;
-  int coefH=3;
-  int factorWidth=(int)maxFace.width/coefW;
-  int factorHeight=(int)maxFace.height/coefH;  
-  Point decayFaceFactor(-factorWidth/2,-factorHeight/2);
-  Size growFaceFactor(factorWidth,factorHeight);
-  maxFace = maxFace + growFaceFactor;
-  maxFace = maxFace + decayFaceFactor;
+  // printf("now grows the image.. (this causes core cump quite often)\n");
+  // // say the factor is 15 of the width
+  // int coefW=50;
+  // int coefH=3;
+  // int factorWidth=(int)maxFace.width/coefW;
+  // int factorHeight=(int)maxFace.height/coefH;  
+  // Point decayFaceFactor(-factorWidth/2,-factorHeight/2);
+  // Size growFaceFactor(factorWidth,factorHeight);
+  // maxFace = maxFace + growFaceFactor;
+  // maxFace = maxFace + decayFaceFactor;
   
   
+  //***************************************************************************
+  //***************************************************************************
+  //  constant ratio width/height
+  //***************************************************************************
+  //***************************************************************************
+
+  printf("computing constant aspect ratio\n");
   //now we set aspect ratio to final one
   int ratio = CONST_HEIGHT / CONST_WIDTH;
   int myRatio = maxFace.height / maxFace.width;
@@ -95,7 +119,6 @@ int FaceDetecter::detectAndReframe( Mat frame,Mat& imOut)
 
   maxFace = maxFace + keepAOffset;
   maxFace = maxFace + keepADecay;
-  std::cout<<maxFace.width<<" "<<maxFace.height<<std::endl;
  
   Mat faceROI = frame_gray( maxFace );
 
