@@ -115,14 +115,17 @@ class Home extends GuestController
 			
 			// upload de l'image de connexion
 			$co_up = new Upload();
-			if($co_up->upload_tmp_file(array('userfile')))
+			if($res = $co_up->upload_tmp_file(array('userfile')))
 			{	
 				// Appel distant de FaceReconnaizion
-				exec('(cd ../Reconnaissance_Faciale/ ; make run ARG=1 IMG='.Upload::$upload_tmp_directory . '/' . $co_up->files_uploaded[0][0].')', $output, $return);
+				exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 1 '.Upload::$upload_tmp_directory . '/R' . $co_up->files_uploaded[0][0].')', $output, $return);
 				//print_r($output);
 				//echo $return;
 				
-				
+				//suppression de l'image de connexion et de l'image formaté
+				unlink(Upload::$upload_tmp_directory . '/' . $co_up->files_uploaded[0][0]);
+				unlink(Upload::$upload_tmp_directory . '/R' . $co_up->files_uploaded[0][0]);
+
 				if(is_numeric($return))
 				{
 						// On récupere l'utilisateur détecté
@@ -139,8 +142,8 @@ class Home extends GuestController
 								$password_ok = true;
 								
 								//Mise en place de la session
-								$this->session->userdata('user_obj',  serialize($user_detected));
-								$this->session->userdata('is_connected', 1);
+								$this->session->set_userdata('user_obj',  serialize($user_detected));
+								$this->session->set_userdata('is_connected', 1);
 							}
 							else
 							{
@@ -156,10 +159,6 @@ class Home extends GuestController
 							$this->session->set_userdata('notif_ok','');
 						}
 				}
-				
-				//suppression de l'image de connexion et de l'image formaté
-				unlink(Upload::$upload_tmp_directory . '/' . $co_up->files_uploaded[0][0]);
-				unlink(Upload::$upload_tmp_directory . '/R' . $co_up->files_uploaded[0][0]);
 				
 				if($password_ok)
 					redirect('flux','refresh');

@@ -71,12 +71,12 @@ abstract class MY_Controller extends CI_Controller
 	
 	public function show404Error()
 	{
-		redirect('error/erreur404','refresh');
+		redirect('error/error404','refresh');
 	}
 	
 	public function show403Error()
 	{
-		redirect('error/erreur403','refresh');
+		redirect('error/error403','refresh');
 	}
 	
 /*

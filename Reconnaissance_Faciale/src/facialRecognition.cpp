@@ -72,9 +72,10 @@ void initImages()
 	      // we are reading dirs Base_de_donnees/upload/[ID]/profile/
 	      filepathSub = filepath + dirSub  + dirpSub->d_name;
 
-	      // If the file is a directory (or is in some way invalid) we'll skip it
+	      // If the file is a directory (or is in some way invalid) we'll skip it      
 	      if (stat( filepathSub.c_str(), &filestatSub )) continue;
 	      if (S_ISDIR( filestatSub.st_mode ))         continue;
+  	     if (strcmp (dirpSub->d_name,"index.php") == 0)         continue; //ignore the index.php file
 	      std::cout<<"\tReading file "<<filepathSub<<" id = "<<label<<std::endl;
 
 	      // we assume the file is an image: push back in the vector, and push back a label

@@ -72,7 +72,7 @@ class Upload extends CI_Model
 			for($i = 0; $i < count($this->files_uploaded); $i++)
 			{
 				//echo '(cd ../Reconnaissance_Faciale/ ; make run ARG=2 IMG='.Upload::$upload_directory . '/' .$this->id_user . '/'. Upload::$upload_avatar_directory . '/' . $this->files_uploaded[$i][0].' ID='.$this->id_user.')';
-				exec('(cd ../Reconnaissance_Faciale/ ; make run ARG=2 IMG='.Upload::$upload_directory . '/' .$this->id_user . '/'. Upload::$upload_avatar_directory . '/' . $this->files_uploaded[$i][0].' ID='.$this->id_user.')', $output, $return);
+				exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 2 '.Upload::$upload_directory . '/' .$this->id_user . '/'. Upload::$upload_avatar_directory . '/' . $this->files_uploaded[$i][0].' '.$this->id_user.')', $output, $return);
 				
 				//echo $return;
 				//echo print_r($output) . 'lol';
@@ -118,10 +118,14 @@ class Upload extends CI_Model
 			//creation des images refactorisés
 			for($i = 0; $i < count($this->files_uploaded); $i++)
 			{
-				exec('(cd ../Reconnaissance_Faciale/ ; make run ARG=2 IMG='.Upload::$upload_tmp_directory . '/' . $this->files_uploaded[$i][0].')', $output, $return);
+				//exec('(cd ../Reconnaissance_Faciale/ ; make run ARG=2 IMG='.Upload::$upload_tmp_directory . '/' . $this->files_uploaded[$i][0].')', $output, $return);
+				exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 2 '.Upload::$upload_tmp_directory . '/' . $this->files_uploaded[$i][0].')', $output, $return);
+
+				//echo $return;
+				//print_r($output);
 				if($return == 0) //pas de visage
 				{
-					unlink(base_url() . Upload::$upload_tmp_directory . '/' . $this->files_uploaded[$i][0]); //suppression de l'image d'origine
+					unlink(Upload::$upload_tmp_directory . '/' . $this->files_uploaded[$i][0]); //suppression de l'image d'origine
 					unset($this->files_uploaded[$i]);
 					$this->files_uploaded = array_values($this->files_uploaded);
 					$i--;
