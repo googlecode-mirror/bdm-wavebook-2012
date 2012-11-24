@@ -64,7 +64,7 @@ void initImages()
 	  dpSub = opendir( (filepath+dirSub).c_str() );
 	  if (dpSub == NULL)
 	    {
-	      std::cout << "Error opening " << baseName << std::endl;
+	      std::cout << "Error opening (2) " << filepath+dirSub << std::endl;
 	      exit(1);
 	    }
 	  while ((dirpSub = readdir( dpSub )))
@@ -110,7 +110,7 @@ int whois (Mat personToPredict)
   /////////////////////////////////////////////////// train our FaceRecognizer
   ///////////////////////////////////////////////////
   model->train(images, labels);
-
+  printf("training done\n");
   /////////////////////////////////////////////////// 
   /////////////////////////////////////////////////// test if the following pic belongs
   /////////////////////////////////////////////////// 
@@ -129,8 +129,7 @@ int main (int argc,char** argv)
     {
     case (1):
       {
-	Mat imgPerson = imread(argv[2], CV_LOAD_IMAGE_COLOR);	
-	initImages();
+	Mat imgPerson = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);	
 	return whois(imgPerson);
       }
       break;
@@ -146,25 +145,8 @@ int main (int argc,char** argv)
 	Mat imgPerson = imread(argv[2], CV_LOAD_IMAGE_COLOR);	
 	Mat imgPersonReframed;
 	int retDetect=detecter.detectAndReframe(imgPerson,imgPersonReframed);
-	switch(retDetect)
-	  {
-	  case MANY_FACES_FOUND:
-	    {
-	      printf("many faces have been found on the image given, we took the heighest\n");
-	    }
-	    break;
-	  case SINGLE_FACE_FOUND:
-	    {
-	      printf("just one face has been found on the image\n");
-	    }
-	    break;
-	  case NO_FACE_FOUND:
-	    {
-	      printf("no face has been found on the image\n");
-	      return retDetect;
-	    }
-	    break;
-	  }
+	if (retDetect==NO_FACE_FOUND)
+	  return 0;
 	if (argc>3)
 	  {
 	    // case the image is given for database purpose
@@ -180,7 +162,6 @@ int main (int argc,char** argv)
 	  printf("image written to %s\n",fileOut.c_str());
 	else
 	  printf("failed to write image, check name validity: %s\n",fileOut.c_str());
-	  printf("%d\n\n",retDetect);
 	return retDetect;
       }
     }
