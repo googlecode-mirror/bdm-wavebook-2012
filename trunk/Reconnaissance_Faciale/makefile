@@ -47,7 +47,7 @@ all : main
 
 main : $(OBJECTS) ${OPENCV_ONE_LIB_NAME}
 	$(CC) $(CFLAGS) $(IFLAGS) $(OBJECTS_DIR) $(LFLAGS) -o $@
-	mv $@ bin/
+	mv main bin/
 
 # build openCV libs
 ${OPENCV_ONE_LIB_NAME} :
@@ -62,7 +62,7 @@ run : main
 	
 %.o : %.cpp
 	$(CC) $(CFLAGS) $(IFLAGS) $(LFGLAGS) -c $<
-	mv $@ objects/
+	mv *.o objects/
 
 archive : 
 	tar -cvf archive.tar makefile src/*.cpp include/*.h include/*.hpp
