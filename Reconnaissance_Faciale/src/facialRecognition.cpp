@@ -167,7 +167,10 @@ int main (int argc,char** argv)
 	return retDetect;
       }
       break;
+    default:
+      {
+	return 133;
+      }
+      break;
     }
-  
-  return 0;
 }
