@@ -75,7 +75,7 @@ void initImages()
 	      // If the file is a directory (or is in some way invalid) we'll skip it
 	      if (stat( filepathSub.c_str(), &filestatSub )) continue;
 	      if (S_ISDIR( filestatSub.st_mode ))         continue;
-	      std::cout<<"\tReading file "<<filepathSub<<std::endl;
+	      std::cout<<"\tReading file "<<filepathSub<<" id = "<<label<<std::endl;
 
 	      // we assume the file is an image: push back in the vector, and push back a label
 	      images.push_back(imread(filepathSub, CV_LOAD_IMAGE_GRAYSCALE));
@@ -166,6 +166,7 @@ int main (int argc,char** argv)
 	  printf("failed to write image, check name validity: %s\n",fileOut.c_str());
 	return retDetect;
       }
+      break;
     }
   
   return 0;
