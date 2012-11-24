@@ -130,7 +130,9 @@ int main (int argc,char** argv)
     case (1):
       {
 	Mat imgPerson = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);	
-	return whois(imgPerson);
+	int ret= whois(imgPerson);
+	printf("Recognition done, the ugly guy on the picture has id %d\n",ret);
+	return ret;
       }
       break;
     case (2):
