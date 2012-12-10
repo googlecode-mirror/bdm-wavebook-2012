@@ -15,6 +15,8 @@
 #define SINGLE_FACE_FOUND 1
 #define MANY_FACES_FOUND 2
 
+#define CONST_WIDTH 92.
+#define CONST_HEIGHT 112.
 
 
 ////////////////////////////////////////////
@@ -28,6 +30,11 @@ class FaceDetecter
   cv::CascadeClassifier eyes_cascade;
 
  public:
+
+
+  /* the const width/height */
+  const static float ratio=CONST_WIDTH / CONST_HEIGHT;
+
   /** 
    * constructor
    * initialisation of classifiers with specified filenames
@@ -45,6 +52,13 @@ class FaceDetecter
     if( !eyes_cascade.load( eyes_cascade_name ) ){ printf("FaceDetecter:--(!)Error loading %s\n",eyes_cascade_name.c_str()); exit(-1); };
     cv::RNG rng(12345);
   }
+
+  /* alter x of the ROI */
+  cv::Rect growROIToRatioOnX (cv::Rect roi) const;
+  /* alter y of the ROI */
+  cv::Rect growROIToRatioOnY (cv::Rect roi) const;
+  bool isOutOfFrame(cv::Mat imgIn,cv::Rect roi) const;
+
 
   /** 
    * this funtion detects a face on a image and reframe the image

@@ -7,11 +7,49 @@
 #include "opencv/ml.h"
 
 #include "faceDetecter.h"
-
-#define CONST_WIDTH 92
-#define CONST_HEIGHT 112
+#include <iostream>
 
 using namespace cv;
+
+
+bool FaceDetecter::isOutOfFrame(Mat imgIn,Rect roi) const
+{
+  // check for lower bounds
+  if ((roi.x<0) || (roi.y<0) ||
+      (roi.x+roi.width>imgIn.cols) || (roi.y+roi.height>imgIn.rows))
+    return true;
+  else 
+    return false;
+}
+
+// we grow the ROI such that we reach the constant ratio
+Rect FaceDetecter::growROIToRatioOnX (Rect roi) const
+{
+  Rect grownROI=roi;
+  float xfactor=(float)roi.height*(float)this->ratio-(float)roi.width;
+  int xfactori=(int)xfactor;
+  Point factorDecay(xfactori/2,0);
+  Size factorGrow(xfactori,0);
+
+  grownROI=grownROI-factorDecay;
+  grownROI=grownROI+factorGrow;
+
+  return grownROI;
+}
+
+// we grow the ROI such that we reach the constant ratio
+Rect FaceDetecter::growROIToRatioOnY (Rect roi) const
+{
+  Rect grownROI=roi;
+  float yfactor=(float)roi.width/(float)this->ratio-(float)roi.height;
+  int yfactori=(int)yfactor;
+  Point factorDecay(0,yfactori/2);
+  Size factorGrow(0,yfactori);
+  grownROI=grownROI+factorGrow;
+  grownROI=grownROI-factorDecay;
+
+  return grownROI;
+}
 
 int FaceDetecter::detectAndReframe( Mat frame,Mat& imOut)
 {
@@ -65,62 +103,23 @@ int FaceDetecter::detectAndReframe( Mat frame,Mat& imOut)
       break;
     }
 
+  // RATIO OF MAXFACE IS ALWAYS 1
+  // therefore we add height, coz' targeted ratio is <1
 
-  /////////////////////// this codes create an ellipse around the face on the frame image
-  /////////////////////// useful for debuging
-  // pick the center of the face
-  // Point center( maxFace.x + maxFace.width*0.5, maxFace.y + maxFace.height*0.5 );
-  // ellipse( frame, center, Size( maxFace.width*0.5, maxFace.height*0.5), 0, 0, 360, Scalar( 255, 0, 255 ), 4, 8, 0 );
-  ///////////////////////
+  // the current ratio is superior to the one we want to reach:
+  // current image is wider:
+  // we grow the height
+  Rect reframed=this->growROIToRatioOnY(maxFace);
 
-  //***************************************************************************
-  //***************************************************************************
-  // cropping image
-  //***************************************************************************
-  //***************************************************************************
 
-  // printf("now grows the image.. (this causes core cump quite often)\n");
-  // // say the factor is 15 of the width
-  // int coefW=50;
-  // int coefH=3;
-  // int factorWidth=(int)maxFace.width/coefW;
-  // int factorHeight=(int)maxFace.height/coefH;  
-  // Point decayFaceFactor(-factorWidth/2,-factorHeight/2);
-  // Size growFaceFactor(factorWidth,factorHeight);
-  // maxFace = maxFace + growFaceFactor;
-  // maxFace = maxFace + decayFaceFactor;
-  
-  
-  //***************************************************************************
-  //***************************************************************************
-  //  constant ratio width/height
-  //***************************************************************************
-  //***************************************************************************
+  if (this->isOutOfFrame(frame_gray,reframed))
+    {
+      // we added on the y, but resulting image was out of frame
+      // therefore we remove on x to keep aspect ratio without being out of frame
+      reframed=this->growROIToRatioOnX(maxFace);
+    }
 
-  printf("computing constant aspect ratio\n");
-  //now we set aspect ratio to final one
-  int ratio = CONST_HEIGHT / CONST_WIDTH;
-  int myRatio = maxFace.height / maxFace.width;
-  Point keepAOffset;
-  Size keepADecay;
-  if (!myRatio<ratio)
-  {
-	  //increase y
-
-	keepAOffset=Point(-(ratio*maxFace.height-maxFace.width)/2,0);
-	keepADecay=Size((ratio*maxFace.height-maxFace.width),0);
-  }
-  else
-  {
-	  //increase x
-	keepAOffset=Point(0,-(ratio*maxFace.width-maxFace.height)/2);
-	keepADecay=Size(0,(ratio*maxFace.width-maxFace.height));
-  }
-
-  maxFace = maxFace + keepAOffset;
-  maxFace = maxFace + keepADecay;
- 
-  Mat faceROI = frame_gray( maxFace );
+  Mat faceROI = frame_gray( reframed );
 
   //***************************************************************************
   //***************************************************************************
@@ -128,6 +127,7 @@ int FaceDetecter::detectAndReframe( Mat frame,Mat& imOut)
   //***************************************************************************
   //***************************************************************************
 
+  // the final resize to reach constant width height dimensions
   resize(faceROI,imOut,Size(CONST_WIDTH,CONST_HEIGHT));
   
 
