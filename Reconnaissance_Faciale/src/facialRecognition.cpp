@@ -21,8 +21,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "facialRecognition.h"
 #include "faceDetecter.h"
+#include "facialRecognition.h"
 #include "labelImage.h"
 
 
@@ -30,10 +30,13 @@ using namespace cv;
 
 
 
-std::vector<Mat> images;
-std::vector<int> labels;
+void RecognizerOfFace::flush()
+{
+  images.clear();
+  labels.clear();
+}
 
-void initImages()
+void RecognizerOfFace::initImages()
 {
   string filepath,filepathSub, baseName="../Base_de_donnees/upload/", dirSub="/profile/reco/";
   DIR *dp,*dpSub;
@@ -91,7 +94,7 @@ void initImages()
 
 
 
-int whois (Mat personToPredict)
+void RecognizerOfFace::whois (Mat personToPredict,int &labelPredicted,double &confidence) 
 {
 
   /////////////////////////////////////////////////// 
@@ -104,7 +107,7 @@ int whois (Mat personToPredict)
   /////////////////////////////////////////////////// 
   /////////////////////////////////////////////////// fill our vectors with database images/labels
   ///////////////////////////////////////////////////
-  initImages();
+  this->initImages();
 
 
   /////////////////////////////////////////////////// 
@@ -115,7 +118,11 @@ int whois (Mat personToPredict)
   /////////////////////////////////////////////////// 
   /////////////////////////////////////////////////// test if the following pic belongs
   /////////////////////////////////////////////////// 
-  return model->predict(personToPredict);
+  model->predict(personToPredict,labelPredicted,confidence);
+
+  // test if confidence is high enough
+  if (confidence<threshold)
+    labelPredicted=-1;
 }
 
 
@@ -130,9 +137,13 @@ int main (int argc,char** argv)
     {
     case (1):
       {
-	Mat imgPerson = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);	
-	int ret= whois(imgPerson);
-	printf("Recognition done, the ugly guy on the picture has id %d\n",ret);
+	Mat imgPerson = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);
+	RecognizerOfFace recognizer;
+	// RecognizerOfFace recognizer(80);
+	double confidence=0.;
+	int ret=0;
+	recognizer.whois(imgPerson,ret,confidence);
+	printf("Recognition done, the ugly guy on the picture has id %d (distance %f)\n",ret,confidence);
 	return ret;
       }
       break;
