@@ -23,7 +23,7 @@ class RecognizerOfFace
   std::vector<int> labels;
  public:
   inline RecognizerOfFace():
-  threshold(0.)
+  threshold(10.)
     {}
   inline RecognizerOfFace(double limit):
     threshold(limit)
