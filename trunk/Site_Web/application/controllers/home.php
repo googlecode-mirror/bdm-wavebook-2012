@@ -100,6 +100,82 @@ class Home extends GuestController
 			parent::loadFooter();
 	}
 	
+	public function login_validation_with_cam()
+	{
+		$this->load->library('form_validation');
+		$this->load->helper('form');
+		$this->form_validation->set_error_delimiters('<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button>', '</div>');
+			
+		//mise en place des regles
+		$this->form_validation->set_rules('password', 'Mot de passe', 'required|alpha|max_length[20]');
+		$this->form_validation->set_rules('url_capture', 'Photo capturée', 'required');
+		$password_ok = false;
+		
+		if ($this->form_validation->run() != FALSE) // reussite
+		{
+			//Verification d'un visage
+			exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 2 '.Upload::$upload_tmp_directory . '/' .  $this->input->post('url_capture').')', $output, $return);
+			if($return == 0) //pas de visage
+			{
+				//Notification d'erreur
+				$this->session->set_userdata('notif_err','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Erreur...</strong> Aucun visage n\'a été detecté dans votre capture !</div>');
+				$this->session->set_userdata('notif_ok','');
+			}
+			else
+			{
+				// Appel distant de FaceReconnaizion
+				exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 1 '.Upload::$upload_tmp_directory . '/R' .  $this->input->post('url_capture').')', $output, $return);
+				//print_r($output);
+				//echo $return;
+				
+				//suppression de l'image de connexion et de l'image formaté
+				unlink(Upload::$upload_tmp_directory . '/' . $this->input->post('url_capture'));
+				unlink(Upload::$upload_tmp_directory . '/R' .  $this->input->post('url_capture'));
+
+				if(is_numeric($return))
+				{
+						// On récupere l'utilisateur détecté
+						$user_detected = User::getUserById($return);
+						
+						// Securité : on verifie que l'utilisateur detecte existe deja
+						if($user_detected != NULL)
+						{
+							// Vérification du mot de passe
+							if(strtolower($this->input->post('password')) == strtolower($user_detected->password))
+							{
+								//Notification de réussite
+								$this->session->set_userdata('notif_ok','<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Connexion réussite !</strong> Bienvenue '.$user_detected->name .' '.$user_detected->vorname.'.</div>');
+								$password_ok = true;
+								
+								//Mise en place de la session
+								$this->session->set_userdata('user_obj',  serialize($user_detected));
+								$this->session->set_userdata('is_connected', 1);
+							}
+							else
+							{
+								//Notification d'erreur
+								$this->session->set_userdata('notif_err','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Erreur...</strong> Bonjour '.$user_detected->name .' '.$user_detected->vorname.', votre mot de passe est incorrect... Veuillez réessayer !</div>');
+								$this->session->set_userdata('notif_ok','');
+							}
+						}
+						else
+						{
+							//Notification d'erreur
+							$this->session->set_userdata('notif_err','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Erreur...</strong> Aucun utilisateur a été trouvé... Veuillez réessayer !</div>');
+							$this->session->set_userdata('notif_ok','');
+						}
+				}
+				
+				if($password_ok)
+					redirect('flux','refresh');
+			}
+		}
+		
+		//on affiche le formulaire
+		$this->login();
+		
+	}
+	
 	public function login_validation()
 	{
 		$this->load->library('form_validation');
@@ -116,7 +192,7 @@ class Home extends GuestController
 			// upload de l'image de connexion
 			$co_up = new Upload();
 			if($res = $co_up->upload_tmp_file(array('userfile')))
-			{	
+			{
 				// Appel distant de FaceReconnaizion
 				exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 1 '.Upload::$upload_tmp_directory . '/R' . $co_up->files_uploaded[0][0].')', $output, $return);
 				//print_r($output);

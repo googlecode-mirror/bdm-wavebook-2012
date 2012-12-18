@@ -1,5 +1,44 @@
 
 	<!-- Corps du site -->
+    <script type="text/javascript">
+	$(document).ready(function() {
+
+	//Changement de mode d'upload (webcam/form)
+	$("#form_choose").click(function() {
+			 $("#login_form").attr('action','<?php echo url('home/login_validation'); ?>');
+			 $("#modular").html('<div id="modular" class="control-group"><label class="control-label" for="avatar">Votre image</label><div class="controls"><input type="file" name="userfile" id="avatar" /></div></div>');
+		});
+
+	$("#webcam_choose").click(function() 
+		{
+			 $("#login_form").attr('action','<?php echo url('home/login_validation_with_cam'); ?>');
+			 $("#modular").html('<div id="status"></div><div><div id="cam"></div><div id="canvas"></div></div><p><button type="button" class="btn btn-info" onClick="webcam.configure()">Configuration...</button> &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-info" onClick="webcam.snap()">Capturer maintenant</button><input type="text" name="url_capture" id="url_capture" style="visibility: hidden;" /></p>');
+	
+		// Configuration de la capture
+		webcam.set_api_url('<?php $seed = 'JvKnrQWPsfuhffdfAuH'; $hash = sha1(uniqid($seed . mt_rand(), true)); echo base_url() . './assets/upload.php?uniq_hash=' . substr($hash, 0, 10); ?>');
+		webcam.set_quality(100);
+		webcam.set_shutter_sound(true, '<?php echo url('assets/docs/shutter.mp3'); ?>');
+		webcam.set_swf_url('<?php echo url('assets/docs/webcam.swf'); ?>');
+		
+		
+		// Callbacks
+		webcam.set_hook('onComplete', function(response){
+			webcam.reset();
+			$('#status').html('<div class="alert alert-success">Capture uploadée !<button type="button" class="close" data-dismiss="alert">x</button></div>');
+			$('#url_capture').val(response);
+			$('#canvas').html('<img src="<?php echo base_url() . '../Base_de_donnees/tmp/'; ?>'+response+'" alt="Votre capture" title="Votre capture" />');
+		});
+		
+		webcam.set_hook('onError', function(response){
+			$('#status').html('<div class="alert alert-error">Error: ' + response + '<button type="button" class="close" data-dismiss="alert">x</button></div>');
+		});
+
+		// Mise en place de la webcam
+		$('#cam').html(webcam.get_html(280,210,320,240));
+
+		});
+	});
+    </script>
     <section id="corps">
 		<div class="row">
 		  <div class="span8">
@@ -7,8 +46,14 @@
 			  <p><strong>Information:</strong> 
 			  En attendant, l'équipe de reconnaissance sonore, l'authentification se fait par mot de passe ! Merci de choisir une image de profil, vous correspondant ! Les formats autorisées sont : <em><?php echo str_replace("|",", ",Upload::$image_file_extension); ?></em></p>
 			  <hr/>
-			  <form class="form-horizontal" action="<?php echo url('home/login_validation'); ?>" method="post" accept-charset="utf-8" enctype="multipart/form-data">
-				  <div class="control-group">
+			  
+			  <div class="btn-group" style="text-align:right;" data-toggle="buttons-radio" style="">
+				<button type="button" id="form_choose" class="btn btn-inverse active">Par formulaire</button>
+			 	<button type="button" id="webcam_choose" class="btn btn-inverse">Par webcam</button>
+			  </div>
+			  <hr/>
+			  <form class="form-horizontal" id="login_form" action="<?php echo url('home/login_validation'); ?>" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+				  <div id="modular" class="control-group">
 					<label class="control-label" for="avatar">Votre image</label>
 					<div class="controls">
 					  <input type="file" name="userfile" id="avatar" />

@@ -142,4 +142,32 @@ a.brand
 	background-repeat: no-repeat;
 	color: rgb(200,200,200);
 }
+
+/* Zone de la webcam */
+#cam, #canvas {	
+	width: 280px;
+	height: 210px;
+	border:15px solid rgba(0,0,0,0.5);
+	background:#eee;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+	margin-bottom: 10px;
+}
+ 
+#cam {
+	float: left;
+}
+ 
+
+#canvas {
+	border:15px solid #ccc;
+	background:#eee;
+	margin-left: 320px;
+}
+
+#canvas img {
+	width: 280px;
+	height: 210px;
+}
  
