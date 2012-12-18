@@ -105,6 +105,7 @@ class Account extends MemberController
 			
 			//sauvegarde de l'utilisateur
 			$user->update();
+			$this->session->set_userdata('user_obj',  serialize($user));
 			
 			//notification
 			$this->session->set_userdata('notif_ok','<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Bravo!</strong> Vos informations personnelles ont été modifiée.</div>');

@@ -1,6 +1,4 @@
-jQuery.noConflict();
-(function($) { 
-  $(function() {
+$(document).ready(function() {
     // Ajout dynamique de nouveau champs d'upload (inscription)
     $("button#add_field").click(function (){
 	var nb = $('div.upload').length;
@@ -10,6 +8,7 @@ jQuery.noConflict();
 	
 	});
 	
+	// Ajout du micro
 	$('input#mic').on('webkitspeechchange',function() 
 	{
 			$('#password').val($('#mic').val());
@@ -17,5 +16,5 @@ jQuery.noConflict();
 			$('#password').focus();
 	});
 
-  });
-})(jQuery);
+});
+
