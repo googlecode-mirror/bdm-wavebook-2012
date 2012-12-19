@@ -26,7 +26,7 @@
 				  <div class="control-group">
 					<label class="control-label" for="password">Votre mot de passe</label>
 					<div class="controls">
-					  <input type="text" name="password" readonly="readonly" id="password" placeholder="Mot de passe" value="<?php echo $user->password; ?>" />
+					  <input type="text" name="password" id="password" placeholder="Mot de passe" value="<?php echo $user->password; ?>" />
 					  <input style="width: 30px; height:30px;border: 4px;background-color:transparent" id="mic" x-webkit-speech />
 					</div>
 				  </div>
