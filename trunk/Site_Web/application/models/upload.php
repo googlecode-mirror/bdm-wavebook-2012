@@ -89,7 +89,7 @@ class Upload extends CI_Model
 
 			//creation des miniatures
 			for($i = 0; $i < count($this->files_uploaded); $i++)
-				$this->create_miniature($this->files_uploaded[$i][0]);
+				$this->create_miniature($this->files_uploaded[$i][0], false);
 				
 			//verification de reussite
 			if(count($this->files_uploaded) == 0)
@@ -102,6 +102,70 @@ class Upload extends CI_Model
 
 		return $res;
 	}
+	
+	/**
+	* Demande d'un upload d'une/des image(s) de profil prise avec une webcam (utilisée pour la reconnaissance)
+	*/
+	public function upload_avatar_capture($id_user, $user_files = array())
+	{
+		$res = false;
+		$this->id_user = $id_user;
+		$this->files_available = $user_files;
+		
+		// 1 . deplacement des images dans le repertoires de l'user
+		for($i = 0; $i < count($this->files_available); $i++)
+		{
+				$res = rename(Upload::$upload_tmp_directory . '/' . $this->files_available[$i], Upload::$upload_directory . '/' .$this->id_user . '/'. Upload::$upload_avatar_directory . '/' . $this->files_available[$i]);
+				if($res)
+				{
+					$new_avatar = array();
+					$new_avatar[] = $this->files_available[$i];
+					array_push($this->files_uploaded, $new_avatar);
+				}
+		}
+		
+		// si il y a au moins une image
+		if(count($this->files_uploaded) > 0)
+		{
+			//2. Creation des images refactorisés (verification de visage)
+			for($i = 0; $i < count($this->files_uploaded); $i++)
+			{
+				exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 2 '.Upload::$upload_directory . '/' .$this->id_user . '/'. Upload::$upload_avatar_directory . '/' . $this->files_uploaded[$i][0].' '.$this->id_user.')', $output, $return);
+				
+				if($return == 0) //pas de visage
+				{
+					unlink(Upload::$upload_directory . '/' .$this->id_user . '/'. Upload::$upload_avatar_directory . '/' . $this->files_uploaded[$i][0]); //suppression de l'image d'origine
+					unset($this->files_uploaded[$i]);
+					$this->files_uploaded = array_values($this->files_uploaded);
+					$i--;
+				}
+			
+			}
+
+			//3. Creation des miniatures
+			for($i = 0; $i < count($this->files_uploaded); $i++)
+				$this->create_miniature($this->files_uploaded[$i][0], true);
+				
+			//verification de reussite
+			$res = true;
+			if(count($this->files_uploaded) == 0)
+			{
+				$res = false;
+				$this->session->set_userdata('notif_err','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Attention !</strong> Aucun visage n\'a été détecté sur l\'image !</div>');
+				$this->session->set_userdata('notif_ok','');
+			}
+		}
+		else
+		{
+			$res = false;
+			$this->session->set_userdata('notif_err','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Attention !</strong> Aucune image uploadé !</div>');
+			$this->session->set_userdata('notif_ok','');
+		}
+
+		return $res;
+	}
+
+	
 
 	/**
 	* Demande d'un upload d'images ou/et de sons dans un fichier temporaire (utilisée lors de la connexion)
@@ -312,10 +376,11 @@ class Upload extends CI_Model
 	/**
 	* Méthode permettant de créer une miniature de l'image de profil (150x150px)
 	*/
-	private function create_miniature($filename)
+	private function create_miniature($filename, $is_capture)
 	{
-		$CI =& get_instance();	
-		$data = $CI->upload->data();
+		$CI =& get_instance();
+		if(!$is_capture)
+			$data = $CI->upload->data();
 		$CI->load->library('image_lib');
 
 		// Chemins
@@ -330,8 +395,12 @@ class Upload extends CI_Model
 		$config['maintain_ratio'] = TRUE;
 		$config['width']	 = 150;
 		$config['height']	= 150;
-		$config['master_dim'] = ($data['image_height'] > $data['image_width']) ? 'width' : 'height';
-
+		
+		if(!$is_capture)
+			$config['master_dim'] = ($data['image_height'] > $data['image_width']) ? 'width' : 'height';
+		else
+			$config['master_dim'] = 'height';
+			
 		// Redimentionnement
 		$CI->image_lib->initialize($config);
 		$CI->image_lib->resize();
@@ -346,8 +415,6 @@ class Upload extends CI_Model
 		$CI->image_lib->clear();
 		$CI->image_lib->initialize($config);
 		$CI->image_lib->crop();
-
-
 	}
 
 }

@@ -28,6 +28,28 @@ class Account extends MemberController
 		
 		redirect('', 'refresh');
 	}
+	
+	public function upload_new_avatar_with_cam()
+	{
+		//Upload de la nouvelle image de profil
+		$user_id = unserialize($this->session->userdata('user_obj'))->id;
+		$upload = new Upload();
+		$res = $upload->upload_avatar_capture($user_id, array($this->input->post('url_capture')));
+
+		//Enregistrement dans la BDD
+		if($res)
+		{
+			$new_avatar = new Avatar();
+			$new_avatar->url = $upload->files_uploaded[0][0];
+			$new_avatar->id_user = $user_id;
+			$new_avatar->save();
+			
+			$this->session->set_userdata('notif_err','');
+			$this->session->set_userdata('notif_ok','<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Bravo!</strong> Votre image de profil a bien été changée.</div>');
+		}
+
+		redirect('account/change_img_profile', 'refresh');
+	}
 
 	public function upload_new_avatar()
 	{
