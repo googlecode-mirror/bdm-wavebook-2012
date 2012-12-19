@@ -3,12 +3,13 @@
     <script type="text/javascript">
 	$(document).ready(function() {
 
-	//Changement de mode d'upload (webcam/form)
+	//Mode 1 : par formulaire
 	$("#form_choose").click(function() {
 			 $("#login_form").attr('action','<?php echo url('home/login_validation'); ?>');
 			 $("#modular").html('<div id="modular" class="control-group"><label class="control-label" for="avatar">Votre image</label><div class="controls"><input type="file" name="userfile" id="avatar" /></div></div>');
 		});
 
+	//Mode 2 : par webcam (prise simple)
 	$("#webcam_choose").click(function() 
 		{
 			 $("#login_form").attr('action','<?php echo url('home/login_validation_with_cam'); ?>');
@@ -34,8 +35,22 @@
 		});
 
 		// Mise en place de la webcam
-		$('#cam').html(webcam.get_html(280,210,320,240));
+		$('#cam').html(webcam.get_html(280,210,640,480));
 
+		});
+		
+		//Callback pour la soumission du form
+		$("#login_form").submit(function() 
+		{
+				if($('#url_capture').val() == "")
+				{
+					$('#status').html('<div class="alert alert-error"><strong>Erreur:</strong> Une capture est attendue !<button type="button" class="close" data-dismiss="alert">x</button></div>');
+					return false;
+				}
+				else
+				{
+					return true;
+				}
 		});
 	});
     </script>
@@ -46,7 +61,6 @@
 			  <p><strong>Information:</strong> 
 			  En attendant, l'équipe de reconnaissance sonore, l'authentification se fait par mot de passe ! Merci de choisir une image de profil, vous correspondant ! Les formats autorisées sont : <em><?php echo str_replace("|",", ",Upload::$image_file_extension); ?></em></p>
 			  <hr/>
-			  
 			  <div class="btn-group" style="text-align:right;" data-toggle="buttons-radio" style="">
 				<button type="button" id="form_choose" class="btn btn-inverse active">Par formulaire</button>
 			 	<button type="button" id="webcam_choose" class="btn btn-inverse">Par webcam</button>
@@ -62,7 +76,7 @@
 				  <div class="control-group">
 					<label class="control-label" for="password">Votre mot de passe</label>
 					<div class="controls">
-						<input type="text" name="password" readonly="readonly" id="password" value="<?php echo set_value('password'); ?>" />
+						<input type="text" name="password" id="password" value="<?php echo set_value('password'); ?>" />
 						<input style="width: 30px; height:30px;border: 4px;background-color:transparent" id="mic" x-webkit-speech />
 					</div>
 				   </div>

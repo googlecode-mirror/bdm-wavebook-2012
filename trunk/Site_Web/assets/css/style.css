@@ -158,7 +158,6 @@ a.brand
 #cam {
 	float: left;
 }
- 
 
 #canvas {
 	border:15px solid #ccc;
@@ -170,4 +169,31 @@ a.brand
 	width: 280px;
 	height: 210px;
 }
- 
+
+table#capture_zone
+{
+	margin-left: 320px;
+}
+
+div.capture_elem 
+{	
+	width: 140px;
+	height: 106px;
+	border: 5px solid #ccc;
+	background:#eee;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	margin-bottom: 3px;
+}
+
+div.capture_elem:hover
+{	
+	border-color: red;
+}
+
+div.capture_elem img
+{	
+	width: 140px;
+	height: 106px;
+}
