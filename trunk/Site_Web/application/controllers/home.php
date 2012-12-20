@@ -189,7 +189,7 @@ class Home extends GuestController
 		if ($this->form_validation->run() != FALSE) // reussite
 		{
 			//Verification d'un visage
-			exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 2 '.Upload::$upload_tmp_directory . '/' .  $this->input->post('url_capture').')', $output, $return);
+			exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 2 "'.Upload::$upload_tmp_directory . '/' .  $this->input->post('url_capture').'")', $output, $return);
 			if($return == 0) //pas de visage
 			{
 				//Notification d'erreur
@@ -198,8 +198,8 @@ class Home extends GuestController
 			}
 			else
 			{
-				// Appel distant de FaceReconnaizion
-				exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 1 '.Upload::$upload_tmp_directory . '/R' .  $this->input->post('url_capture').')', $output, $return);
+				// Appel distant de FaceRecognition
+				exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 1 "'.Upload::$upload_tmp_directory . '/R' .  $this->input->post('url_capture').'")', $output, $return);
 				//print_r($output);
 				//echo $return;
 				
@@ -269,7 +269,7 @@ class Home extends GuestController
 			if($res = $co_up->upload_tmp_file(array('userfile')))
 			{
 				// Appel distant de FaceReconnaizion
-				exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 1 '.Upload::$upload_tmp_directory . '/R' . $co_up->files_uploaded[0][0].')', $output, $return);
+				exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 1 "'.Upload::$upload_tmp_directory . '/R' . $co_up->files_uploaded[0][0].'")', $output, $return);
 				//print_r($output);
 				//echo $return;
 				

@@ -100,7 +100,7 @@ void RecognizerOfFace::whois (Mat personToPredict,int &labelPredicted,double &co
   /////////////////////////////////////////////////// 
   /////////////////////////////////////////////////// Create a new Fisherfaces model 
   ///////////////////////////////////////////////////
-  Ptr<FaceRecognizer> model =  createEigenFaceRecognizer();
+  Ptr<FaceRecognizer> model =  createLBPHFaceRecognizer();
   
 
 
