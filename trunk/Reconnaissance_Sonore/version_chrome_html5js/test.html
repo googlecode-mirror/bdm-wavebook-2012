@@ -1,5 +1,7 @@
 <html><body><h1>Test reconnaissance vocale</h1>
 
+<!--	<body lang="zh-Hans">-->
+
 	<script type="text/javascript">
 		function transcribe(words){
 			document.getElementById("mic").value="";
@@ -15,6 +17,8 @@
 	<p>
 	<strong>Saisissez un mot et dite le pour valider &#8211; cliquez sur l'icone de microphone et parlez : </strong><br/>
 	<textarea id="speech" cols="0"></textarea>
+
+	
 	<br/> 
 	<input style="width: 30px; height:30px;border: 4px;background-color:transparent" id="mic" x-webkit-speech onwebkitspeechchange="transcribe(this.value)"/>
 <p>
