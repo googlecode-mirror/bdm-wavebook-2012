@@ -80,11 +80,11 @@
 			<h2>Vos anciennes images de profils :</h2>
 			<p>Ces images sont également utilisées par le programme de reconnaissance faciale lors de la phase d'authentification sur le site.</p>
 			<table class="table table-striped">
-				<tr><th>Aperçu</th><th>Date ajout</th><th>Téléchargement</th></tr>
+				<tr><th>Aperçu</th><th>Date ajout</th><th>Téléchargement</th><th>Supprimer</th></tr>
 				<?php
 					for($i=1; $i < count($list_avatars); $i++)
 					{
-						echo '<tr><td><img class="img-polaroid avatar-little" src="'.$list_avatars[$i]->getMiniatureLink().'" alt="Avatar '.$i.'" title="Avatar '.$i.'" /></td><td>'.$list_avatars[$i]->date.'</td><td><a target="_blank" href="'.$list_avatars[$i]->getLink().'">Lien direct</a></td></tr>';
+						echo '<tr><td><img class="img-polaroid avatar-little" src="'.$list_avatars[$i]->getMiniatureLink().'" alt="Avatar '.$i.'" title="Avatar '.$i.'" /></td><td>'.$list_avatars[$i]->date.'</td><td><a target="_blank" href="'.$list_avatars[$i]->getLink().'"><i class="icon-file"></i> Lien direct</a></td><td><a href="'. url('account/delete_avatar') .'/'. $list_avatars[$i]->id.'"><i class="icon-trash"></i> Supprimer</td></tr>';
 					}
 				 ?>
 			</table>

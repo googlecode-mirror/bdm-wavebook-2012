@@ -180,6 +180,18 @@ class File extends CI_Model
 	}
 	
 	/**
+	* Fonction comptant le nombre de partages totals dans la base
+	*/
+	public static function countFiles()
+	{
+			$sql = 'SELECT * FROM '.File::$table;
+			$CI =& get_instance();
+			$query = $CI->db->query($sql);
+			
+			return $query->num_rows();
+	}
+	
+	/**
 	* Fonction permettant d'afficher les informations du fichier (mode debug)
 	*/
 	public function toString()

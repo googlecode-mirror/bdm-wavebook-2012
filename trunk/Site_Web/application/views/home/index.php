@@ -33,6 +33,12 @@
 		  </div>
 		  <div class="span4">
 			<div style="padding-left:10px;">
+				<h3>Statistiques</h3>
+				<p>Il y a <span style="font-size:15px;font-weight:bold;"><?php echo User::countUser(); ?></span> utilisateurs qui ont partagés <span style="font-size:15px;"><?php echo File::countFiles(); ?></span> fichiers.</p>
+			</div>
+		  </div>
+		  <div class="span4">
+			<div style="padding-left:10px;">
 				<h3>Pas encore inscrit ?</h3>
 				<a href="<?php  echo url('home/register'); ?>" class="btn btn-large btn-primary"><i class="icon-plus-sign icon-white"></i> Inscription rapide</a>
 			</div>

@@ -29,6 +29,39 @@ class Account extends MemberController
 		redirect('', 'refresh');
 	}
 	
+	public function delete_avatar($id_avatar)
+	{
+			$user_id = unserialize($this->session->userdata('user_obj'))->id;
+			
+			$del = Avatar::getAvatarById($id_avatar);
+			if($del != NULL)
+			{
+				//echo $del->id_user . "==" . $user_id;
+				if($del->id_user == $user_id)
+				{
+					if(count(Avatar::getAvatarsByUserId($user_id)) > 1)
+					{
+							$del->delete();
+							$this->session->set_userdata('notif_ok','<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Bravo!</strong> Avatar supprimé.</div>');
+					}
+					else
+					{
+						$this->session->set_userdata('notif_err','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Erreur!</strong> Il ne vous reste que un seul avatar.</div>');
+					}
+				}
+				else
+				{
+					$this->session->set_userdata('notif_err','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Erreur!</strong> Vous ne pouvez pas supprimer un avatar qui ne vous appartient pas.</div>');
+				}
+			}
+			else
+			{
+				$this->session->set_userdata('notif_err','<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><strong>Erreur!</strong> Aucun avatar selectionné pour la suppression.</div>');
+			}
+			
+			redirect('account/change_img_profile','refresh');
+	}
+	
 	public function upload_new_avatar_with_cam()
 	{
 		//Upload de la nouvelle image de profil
