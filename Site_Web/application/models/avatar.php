@@ -62,6 +62,33 @@ class Avatar extends CI_Model
 			
 		return $list_avatars;
 	}
+	
+	/**
+	* Fonction permettant la récuperation d'un avatar par son id
+	* @param identifiant de utilisateur
+	*/
+	public static function getAvatarById($id = '')
+	{
+		$avatar = null;
+		$sql = 'SELECT * FROM '.Avatar::$table.' WHERE id_avatar = ?';
+				
+		$CI =& get_instance();	
+		$query = $CI->db->query($sql,array($id));
+		$row = $query->row();
+				
+		if($query->num_rows() > 0)
+		{
+			$avatar = new Avatar();
+			$avatar->id = $id;
+			$avatar->id_user = $row->id_user;
+			$avatar->url = $row->url_avatar;
+			$avatar->date = $row->date_avatar;
+		}
+
+		$query->free_result();
+
+		return $avatar;
+	}
 
 	/**
 	* Fonction permettant de retourner le lien de l'avatar
@@ -90,6 +117,24 @@ class Avatar extends CI_Model
 			
 			$query = $CI->db->query($sql, array($this->id_user, $this->url));
 
+			return $query;
+	}
+	
+	/**
+	* Fonction permettant de supprimer un avatar
+	*/
+	public function delete()
+	{
+			//suppression dans la base de données
+			$sql = 'DELETE FROM '.Avatar::$table.' WHERE id_avatar = ?';
+			$CI =& get_instance();
+			$query = $CI->db->query($sql, array($this->id));
+			
+			//suppression sur le disque
+			unlink(Upload::$upload_directory . '/' . $this->id_user . '/' . Upload::$upload_avatar_directory . '/' . $this->url); // base
+			unlink(Upload::$upload_directory . '/' . $this->id_user . '/' . Upload::$upload_avatar_reco_directory . '/R' . $this->url); // refactorise
+			unlink(Upload::$upload_directory . '/' . $this->id_user . '/' . Upload::$upload_avatar_mini_directory . '/' . $this->url); // miniature
+			
 			return $query;
 	}
 	

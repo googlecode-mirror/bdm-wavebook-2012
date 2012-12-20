@@ -29,11 +29,16 @@
 				</p>
 			</div>
 		  </div>
-		  <div class="span4">
-			<div style="padding-left:10px;">
-				<h3>Pas encore inscrit ?</h3>
-				<a href="<?php  echo url('home/register'); ?>" class="btn btn-large btn-primary"><i class="icon-plus-sign icon-white"></i> Inscription rapide</a>
-			</div>
+			  <?php 
+			  if($this->session->userdata('is_connected') != 1)
+			  {
+			  echo '<div class="span4">
+				<div style="padding-left:10px;">
+					<h3>Pas encore inscrit ?</h3>
+					<a href="'.url('home/register') . '" class="btn btn-large btn-primary"><i class="icon-plus-sign icon-white"></i> Inscription rapide</a>
+				</div>';
+			}
+			?>
 		  </div>
 		</div>
     </section>
