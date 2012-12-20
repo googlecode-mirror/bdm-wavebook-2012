@@ -72,7 +72,7 @@ class Upload extends CI_Model
 			for($i = 0; $i < count($this->files_uploaded); $i++)
 			{
 				//echo '(cd ../Reconnaissance_Faciale/ ; make run ARG=2 IMG='.Upload::$upload_directory . '/' .$this->id_user . '/'. Upload::$upload_avatar_directory . '/' . $this->files_uploaded[$i][0].' ID='.$this->id_user.')';
-				exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 2 "'.Upload::$upload_directory . '/' .$this->id_user . '/'. Upload::$upload_avatar_directory . '/' . $this->files_uploaded[$i][0].' '.$this->id_user.'")', $output, $return);
+				exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 2 "'.Upload::$upload_directory . '/' .$this->id_user . '/'. Upload::$upload_avatar_directory . '/' . $this->files_uploaded[$i][0].'" '.$this->id_user.')', $output, $return);
 				
 				//echo $return;
 				//echo print_r($output) . 'lol';
@@ -130,7 +130,7 @@ class Upload extends CI_Model
 			//2. Creation des images refactorisés (verification de visage)
 			for($i = 0; $i < count($this->files_uploaded); $i++)
 			{
-				exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 2 "'.Upload::$upload_directory . '/' .$this->id_user . '/'. Upload::$upload_avatar_directory . '/' . $this->files_uploaded[$i][0].' '.$this->id_user.'")', $output, $return);
+				exec('(export LD_LIBRARY_PATH="OpenCV-2.4.2/release/lib/" ; cd ../Reconnaissance_Faciale/ ; bin/main 2 "'.Upload::$upload_directory . '/' .$this->id_user . '/'. Upload::$upload_avatar_directory . '/' . $this->files_uploaded[$i][0].'" '.$this->id_user.')', $output, $return);
 				
 				if($return == 0) //pas de visage
 				{
